@@ -23,7 +23,7 @@ double norm (double* point1, double* point2, int dimension){
 
 double** wam(double** datapoints, double pointnumber, int dimension) {
     //build matrix
-    double **wamMatrix;
+    double ** wamMatrix;
     int i, j;
     double pointNorm;
     double result;
@@ -47,15 +47,14 @@ double** wam(double** datapoints, double pointnumber, int dimension) {
             }
         }
     }
-    return wam;
+    return wamMatrix;
 }
 
-double** lnorm(double** datapoints){
-    double** wamMatrix = wam(datapoints);
+double** lnorm(double** datapoints,double pointnumber, int dimension){
+    double** wamMatrix = wam(datapoints,pointnumber,dimension);
     double** DDGMatrix; //לחשוב איך לבצעאת זה בצורה חכמה בהתבסס על חישובים קודמים
     double** IMatrix;
     double** lnorm;
-    double pointnumber;
     int i,j;
     for (i = 0; i < pointnumber; i++){
         for (j = 0; i < pointnumber; i++){
@@ -63,8 +62,8 @@ double** lnorm(double** datapoints){
                 DDGMatrix[i][j] = (double)pow(DDGMatrix[i][j],-1/2);
             }
         }
-    lnorm = Multiplicationmatrices(DDGMatrix,wamMatrix); //להשלים פונקציה מאדם
-    lnorm = Multiplicationmatrices(lnorm,DDGMatrix); //D^(-1/2) * W * D^(-1/2)
+    //lnorm = Multiplicationmatrices(DDGMatrix,wamMatrix); //להשלים פונקציה מאדם
+    //lnorm = Multiplicationmatrices(lnorm,DDGMatrix); //D^(-1/2) * W * D^(-1/2)
     for (i = 0; i < pointnumber; i++){ //I - D^(-1/2) * W * D^(-1/2)
         for (j = 0; i < pointnumber; i++){
             if (i == j)
@@ -97,7 +96,7 @@ int main(int argc, char **argv) {
     int maxlinelen = 0;
     int currlinelen = 0;
     int k, i, j, ch, ClusterNumber;
-    FILE *file;
+    FILE *fp;
     int changed = 1;
     char *cordinate;
     char *line;
@@ -106,15 +105,16 @@ int main(int argc, char **argv) {
     assert(isNumber(argv[1]) && "1st arg is not a number");
     k = atoi(argv[1]);
 
-    file = fopen(argv[3], "r");;
-    assert(file != NULL && "failed to open file");
-    while ((ch = fgetc(file)) != 10) /*check the dimension of the vectors*/
+    fp = fopen("input1.txt" , "r");
+    assert(fp != NULL && "failed to open file");
+    while ((ch = fgetc(fp)) != 10) /*check the dimension of the vectors*/
     {
         if (ch == ',')
             dimension++;
+        printf("%d",dimension);
     }
-    file = fopen(argv[3], "r");;
-    while ((ch = fgetc(file)) != EOF) /*check the number of the vectors*/
+    fp = fopen( "input1.txt" , "r");;
+    while ((ch = fgetc(fp)) != EOF) /*check the number of the vectors*/
     {
         currlinelen++;
         if (ch == 10)
@@ -141,10 +141,10 @@ int main(int argc, char **argv) {
         centroids[i] = malloc(dimension * sizeof(double));
         assert(centroids[i] != NULL && "malloc failed");
     }
-    file = fopen(argv[3], "r");;
+    fp = fopen( "input1.txt" , "r");;
     i = 0;
     line = malloc(maxlinelen * sizeof(char));
-    while (fgets(line, maxlinelen + 1, file) != NULL)
+    while (fgets(line, maxlinelen + 1, fp) != NULL)
     {
         cordinate = strtok(line, ",");
         for (j = 0; j < dimension; j++)
@@ -156,7 +156,7 @@ int main(int argc, char **argv) {
         }
         i++;
     }
-    file = fopen(argv[3], "r");;
+    fp = fopen( "input1.txt" , "r");;
     /*INIT CLUSTERS*/
     assert(NULL != (clusters = calloc(pointsNumber, sizeof(int))) && "calloc failed");
     for (i = 0; i < pointsNumber; i++)
@@ -166,7 +166,20 @@ int main(int argc, char **argv) {
         else
             clusters[i] = -1;
     }
-    fclose(file);
+    fclose(fp);
+
+
+    for (i = 0; i < k; i++)
+    {
+        for (j = 0; j < dimension; j++)
+        {
+            printf("%.4f", points[i][j]);
+            if (j < dimension - 1)
+                printf(",");
+        }
+        printf("\n");
+    }
+
 
     wam = (points,pointsNumber,dimension);
     for (i = 0; i < pointsNumber; i++)
@@ -199,16 +212,16 @@ int main(int argc, char **argv) {
 //    }
 
     /*FINAL PRINT*/
-    for (i = 0; i < k; i++)
-    {
-        for (j = 0; j < dimension; j++)
-        {
-            printf("%.4f", centroids[i][j]);
-            if (j < dimension - 1)
-                printf(",");
-        }
-        printf("\n");
-    }
+//    for (i = 0; i < k; i++)
+//    {
+//        for (j = 0; j < dimension; j++)
+//        {
+//            printf("%.4f", centroids[i][j]);
+//            if (j < dimension - 1)
+//                printf(",");
+//        }
+//        printf("\n");
+//    }
 
     for (i = 0; i < k; i++)
         free(centroids[i]);
