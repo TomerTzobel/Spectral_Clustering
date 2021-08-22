@@ -1,0 +1,3 @@
+C:/Users/user/Desktop/Spectral_Clustering/TomerPart/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/user/Desktop/Spectral_Clustering/TomerPart/cmake-build-debug/CMakeFiles/TomerPart.dir
+C:/Users/user/Desktop/Spectral_Clustering/TomerPart/cmake-build-debug/CMakeFiles/edit_cache.dir
