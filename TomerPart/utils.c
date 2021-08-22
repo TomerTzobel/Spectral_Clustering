@@ -16,7 +16,7 @@ void free_matrix(double **matrix, int rows);
 
 double **multiply_matrices(double **A, int rows_A, int cols_A, double **B, int rows_B, int cols_B);
 
-void bubbleSort(int arr[], int n);
+void bubbleSort(double arr[], int n);
 
 /* init matrix of zeros */
 double **init_matrix(int rows, int cols) {
@@ -57,18 +57,17 @@ double **multiply_matrices(double **A, int rows_A, int cols_A, double **B, int r
             }
         }
     }
-
 }
 
 /* code by GFG, with our minor optimization */
-void swap(int *xp, int *yp) {
-    int temp = *xp;
+void swap(double *xp, double *yp) {
+    double temp = *xp;
     *xp = *yp;
     *yp = temp;
 }
 
 /* code by GFG, with our minor optimization */
-void bubbleSort(int arr[], int n) {
+void bubbleSort(double arr[], int n) {
     int i, j, swapped;
     for (i = 0; i < n - 1; i++) {
         swapped = 0;
