@@ -8,22 +8,45 @@
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define FLT_MAX 3.402823e+38
+#define ERR_MSG "An Error Has Occured"
 
+///* init matrix of zeros */
+double **init_matrix(int rows, int cols) {
+    double **matrix = malloc(rows * sizeof(double *));
+    assert(matrix != NULL && ERR_MSG);
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = calloc(cols, sizeof(double));
+        assert(matrix[i] != NULL && ERR_MSG);
+    }
+    return matrix;
+}
+
+void print_matrix(double **matrix, int rows, int cols) {
+    int i, j;
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
+            printf("%.4f", matrix[i][j]);
+            if (j < cols - 1)
+                printf(",");
+        }
+        printf("\n");
+    }
+}
 
 double norm (double* point1, double* point2, int dimension){
     int i;
     double result = 0;
     double norm;
-    for (i = 0; i < dimension; i++){
-        result += (double)pow((point1[i]-point2[i]),2);
+    for (i = 0; i < dimension; i++) {
+        result += (double) pow((point1[i] - point2[i]), 2);
+    }
     norm = (double)sqrt(result);
     return norm;
-    }
 }
 
-double** wam(double** datapoints, double pointnumber, int dimension) {
+double** wam(double** datapoints, int pointnumber, int dimension) {
     //build matrix
-    double ** wamMatrix;
+    double** wamMatrix;
     int i, j;
     double pointNorm;
     double result;
@@ -34,38 +57,69 @@ double** wam(double** datapoints, double pointnumber, int dimension) {
         assert(wamMatrix[i] != NULL && "malloc failed");
     }
     for (i = 0; i < pointnumber; i++) {
-        for (j = 0; i < pointnumber; i++) {
-            if (i == j)
+        for (j = 0; j < pointnumber; j++) {
+            if (i == j) {
                 wamMatrix[i][j] = 0;
+            }
             else {
                 pointNorm = norm(datapoints[i], datapoints[j], dimension);
                 result = (double) pow(M_E, ((-pointNorm) / 2)); //M_E is the mathematical constant e
-                if (result > 0)
-                    wamMatrix[i][j] = result;
-                else
-                    wamMatrix[i][j] = 0;
+                wamMatrix[i][j] = result;
             }
         }
     }
     return wamMatrix;
 }
 
+double** eval_ddg(double **weighted_matrix, int n) {
+    int i,j;
+    double sum;
+    double **diagonal_degree_matrix = init_matrix(n,n);
+    for (i = 0; i < n; i++) {
+        sum = 0;
+        for (j = 0; j < n; j++) { // sum row
+            sum += weighted_matrix[i][j];
+        }
+        diagonal_degree_matrix[i][i] = sum;
+    }
+    return diagonal_degree_matrix;
+}
+
+double** ddg(double **datapoints, int pointnumber, int dimension) {
+    double **weighted_matrix = wam(datapoints, pointnumber, dimension);
+    double **diag = eval_ddg(weighted_matrix, pointnumber);
+    return diag;
+}
+
+double** multiply_matrices(double **A, int rows_A, int cols_A, double **B, int rows_B, int cols_B) {
+    assert(cols_A == rows_B && "invalid multiplication");
+    double **res = init_matrix(rows_A, cols_B);
+    for (int i = 0; i < rows_A; ++i) {
+        for (int j = 0; j < cols_B; ++j) {
+            for (int k = 0; k < cols_A; ++k) {
+                res[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+    return res;
+}
+
 double** lnorm(double** datapoints,double pointnumber, int dimension){
     double** wamMatrix = wam(datapoints,pointnumber,dimension);
-    double** DDGMatrix; //לחשוב איך לבצעאת זה בצורה חכמה בהתבסס על חישובים קודמים
-    double** IMatrix;
+    double** DDGMatrix = ddg(datapoints,pointnumber,dimension);  //לחשוב איך לבצע את זה בצורה חכמה בהתבסס על חישובים קודמים
+    double** tmp_multiply;
     double** lnorm;
     int i,j;
     for (i = 0; i < pointnumber; i++){
-        for (j = 0; i < pointnumber; i++){
+        for (j = 0; j < pointnumber; j++){
             if (i == j)
-                DDGMatrix[i][j] = (double)pow(DDGMatrix[i][j],-1/2);
+                DDGMatrix[i][j] = (double)(1/(double)sqrt(DDGMatrix[i][j])); //D^(-1/2)
             }
         }
-    //lnorm = Multiplicationmatrices(DDGMatrix,wamMatrix); //להשלים פונקציה מאדם
-    //lnorm = Multiplicationmatrices(lnorm,DDGMatrix); //D^(-1/2) * W * D^(-1/2)
+    tmp_multiply = multiply_matrices(DDGMatrix,pointnumber,pointnumber,wamMatrix,pointnumber,pointnumber);
+    lnorm = multiply_matrices(tmp_multiply,pointnumber,pointnumber,DDGMatrix,pointnumber,pointnumber); //D^(-1/2) * W * D^(-1/2)
     for (i = 0; i < pointnumber; i++){ //I - D^(-1/2) * W * D^(-1/2)
-        for (j = 0; i < pointnumber; i++){
+        for (j = 0; j < pointnumber; j++){
             if (i == j)
                 lnorm[i][j] = 1 - lnorm[i][j];
             else
@@ -75,8 +129,7 @@ double** lnorm(double** datapoints,double pointnumber, int dimension){
     return lnorm;
 }
 
-int isNumber(char *stringNum)
-{
+int isNumber(char *stringNum){
     int length, i;
     length = strlen(stringNum);
     for (i = 0; i < length; i++)
@@ -88,7 +141,7 @@ int isNumber(char *stringNum)
 }
 
 int main(int argc, char **argv) {
-    double **points, **centroids, **wam;
+    double **points, **centroids, **wamMatrix;
     int *clusters;
     int max_itter = 200;
     int dimension = 1;
@@ -105,15 +158,14 @@ int main(int argc, char **argv) {
     assert(isNumber(argv[1]) && "1st arg is not a number");
     k = atoi(argv[1]);
 
-    fp = fopen("input1.txt" , "r");
+    fp = fopen("C:\\Users\\user\\Desktop\\input_1.txt" , "r");
     assert(fp != NULL && "failed to open file");
     while ((ch = fgetc(fp)) != 10) /*check the dimension of the vectors*/
     {
         if (ch == ',')
             dimension++;
-        printf("%d",dimension);
     }
-    fp = fopen( "input1.txt" , "r");;
+    fp = fopen("C:\\Users\\user\\Desktop\\input_1.txt" , "r");
     while ((ch = fgetc(fp)) != EOF) /*check the number of the vectors*/
     {
         currlinelen++;
@@ -141,7 +193,7 @@ int main(int argc, char **argv) {
         centroids[i] = malloc(dimension * sizeof(double));
         assert(centroids[i] != NULL && "malloc failed");
     }
-    fp = fopen( "input1.txt" , "r");;
+    fp = fopen("C:\\Users\\user\\Desktop\\input_1.txt" , "r");
     i = 0;
     line = malloc(maxlinelen * sizeof(char));
     while (fgets(line, maxlinelen + 1, fp) != NULL)
@@ -156,7 +208,7 @@ int main(int argc, char **argv) {
         }
         i++;
     }
-    fp = fopen( "input1.txt" , "r");;
+    fp = fopen("C:\\Users\\user\\Desktop\\input_1.txt" , "r");
     /*INIT CLUSTERS*/
     assert(NULL != (clusters = calloc(pointsNumber, sizeof(int))) && "calloc failed");
     for (i = 0; i < pointsNumber; i++)
@@ -169,29 +221,40 @@ int main(int argc, char **argv) {
     fclose(fp);
 
 
-    for (i = 0; i < k; i++)
-    {
-        for (j = 0; j < dimension; j++)
-        {
-            printf("%.4f", points[i][j]);
-            if (j < dimension - 1)
-                printf(",");
-        }
-        printf("\n");
-    }
+//    for (i = 0; i < pointsNumber; i++)
+//    {
+//        for (j = 0; j < dimension; j++)
+//        {
+//            printf("%.4f", points[i][j]);
+//            if (j < dimension - 1)
+//                printf(",");
+//        }
+//        printf("\n");
+//    }
 
+    double** ddgmatirx;
+    double** lnorm1;
+    double** test;
+    wamMatrix = wam(points,pointsNumber,dimension);
+    ddgmatirx = ddg(points,pointsNumber,dimension);
+    lnorm1= lnorm(points,pointsNumber,dimension);
+//    double A[2][2] = {{2.0,2.0},{2.0,2.0}};
+//    double B[2][2] ={{3.0,1.0},{3.0,1.0}};
+//    int c = 2;
+//    test = multiply_matrices(&A,2, 2,&B, 2,2);
+//    print_matrix(test,2,2);
 
-    wam = (points,pointsNumber,dimension);
-    for (i = 0; i < pointsNumber; i++)
-    {
-        for (j = 0; j < pointsNumber; j++)
-        {
-            printf("%.4f", wam[i][j]);
-            if (j < pointsNumber - 1)
-                printf(",");
-        }
-        printf("\n");
-    }
+    print_matrix(lnorm1,pointsNumber,pointsNumber);
+//    for (i = 0; i < pointsNumber; i++)
+//    {
+//        for (j = 0; j < pointsNumber; j++)
+//        {
+//            printf("%.4f", wamMatrix[i][j]);
+//            if (j < pointsNumber - 1)
+//                printf(",");
+//        }
+//        printf("\n");
+//    }
 
 
 
@@ -234,6 +297,5 @@ int main(int argc, char **argv) {
 
 
 
-    printf("Hello, World!\n");
     return 0;
 }
