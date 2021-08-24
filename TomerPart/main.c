@@ -6,42 +6,17 @@
 #include <ctype.h>
 #include "utils.c"
 #include "ddg.c"
+#include "wam.c"
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define FLT_MAX 3.402823e+38
 #define ERR_MSG "An Error Has Occured"
 
-double **wam(double **datapoints, int n, int dimension) {
-    double **wamMatrix;
-    int i, j;
-    double pointNorm, result;
-    wamMatrix = init_matrix(n, n);
-    for (i = 1; i < n - 1; i++) {
-        for (j = i + 1; j < n; j++) {
-            pointNorm = norm(datapoints[i], datapoints[j], dimension);
-            result = (double) pow(M_E, ((-pointNorm) / 2)); //M_E is the mathematical constant e
-            wamMatrix[i][j] = result;
-            wamMatrix[j][i] = result; // symmetry of W
-        }
-    }
-    return wamMatrix;
-}
-
-/* inplace power matrix elementwise by x */
-void power_matrix_elementwise(double **matrix, int n, double x) {
-    int i, j;
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < n; j++) {
-            if (i == j)
-                matrix[i][j] = (double) (pow(matrix[i][j], x));
-        }
-    }
-}
 
 double **lnorm(double **datapoints, int n, int dimension) {
     double **wamMatrix = wam(datapoints, n, dimension);
-    double **DDGMatrix = eval_ddg(datapoints, n);
+    double **DDGMatrix = eval_ddg(wamMatrix, n);
     double **tmp_multiply, **lnorm;
     int i, j;
     power_matrix_elementwise(DDGMatrix, n, ((double) -1 / (double) 2)); //D^(-1/2)

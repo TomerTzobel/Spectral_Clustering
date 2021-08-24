@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <math.h>
 
 #define ERR_MSG "An Error Has Occured"
 
@@ -17,6 +18,9 @@ double **multiply_matrices_same_dim(double **A, double **B, int n);
 double norm(double *point1, double *point2, int dimension);
 
 void bubbleSort(double arr[], int n);
+
+void power_matrix_elementwise(double **matrix, int n, double x);
+
 
 /* init matrix of zeros */
 double **init_matrix(int rows, int cols) {
@@ -97,6 +101,17 @@ void bubbleSort(double arr[], int n) {
         }
         if (!swapped) {
             break;
+        }
+    }
+}
+
+/* inplace power matrix elementwise by x */
+void power_matrix_elementwise(double **matrix, int n, double x) {
+    int i, j;
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            if (i == j)
+                matrix[i][j] = (double) (pow(matrix[i][j], x));
         }
     }
 }

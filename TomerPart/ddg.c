@@ -1,7 +1,7 @@
 
 
 #include "utils.c"
-#include "main.c"
+#include "wam.c"
 
 
 
@@ -19,8 +19,9 @@ double** eval_ddg(double **weighted_matrix, int n) {
     return diagonal_degree_matrix;
 }
 
-double** ddg(double **datapoints, int pointnumber, int dimension) {
-    double **weighted_matrix = wam(datapoints, pointnumber, dimension);
-    double **diag = eval_ddg(weighted_matrix, pointnumber);
+double** ddg(double **datapoints, int n, int dimension) {
+    double **weighted_matrix = wam(datapoints, n, dimension);
+    double **diag = eval_ddg(weighted_matrix, n);
+    free_matrix(weighted_matrix, n);
     return diag;
 }

@@ -3,6 +3,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/TomerPart.dir/eigengap.c.obj"
   "CMakeFiles/TomerPart.dir/main.c.obj"
   "CMakeFiles/TomerPart.dir/utils.c.obj"
+  "CMakeFiles/TomerPart.dir/wam.c.obj"
   "TomerPart.exe"
   "TomerPart.exe.manifest"
   "TomerPart.pdb"
