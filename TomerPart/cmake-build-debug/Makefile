@@ -176,6 +176,30 @@ eigengap.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\TomerPart.dir\build.make CMakeFiles/TomerPart.dir/eigengap.c.s
 .PHONY : eigengap.c.s
 
+lnorm.obj: lnorm.c.obj
+.PHONY : lnorm.obj
+
+# target to build an object file
+lnorm.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TomerPart.dir\build.make CMakeFiles/TomerPart.dir/lnorm.c.obj
+.PHONY : lnorm.c.obj
+
+lnorm.i: lnorm.c.i
+.PHONY : lnorm.i
+
+# target to preprocess a source file
+lnorm.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TomerPart.dir\build.make CMakeFiles/TomerPart.dir/lnorm.c.i
+.PHONY : lnorm.c.i
+
+lnorm.s: lnorm.c.s
+.PHONY : lnorm.s
+
+# target to generate assembly for a file
+lnorm.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TomerPart.dir\build.make CMakeFiles/TomerPart.dir/lnorm.c.s
+.PHONY : lnorm.c.s
+
 main.obj: main.c.obj
 .PHONY : main.obj
 
@@ -263,6 +287,9 @@ help:
 	@echo ... eigengap.obj
 	@echo ... eigengap.i
 	@echo ... eigengap.s
+	@echo ... lnorm.obj
+	@echo ... lnorm.i
+	@echo ... lnorm.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
