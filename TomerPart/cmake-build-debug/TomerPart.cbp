@@ -77,6 +77,9 @@
 		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/ddg.c">
 			<Option target="TomerPart"/>
 		</Unit>
+		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/ddg.h">
+			<Option target="TomerPart"/>
+		</Unit>
 		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/eigengap.c">
 			<Option target="TomerPart"/>
 		</Unit>
@@ -86,7 +89,13 @@
 		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/utils.c">
 			<Option target="TomerPart"/>
 		</Unit>
+		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/utils.h">
+			<Option target="TomerPart"/>
+		</Unit>
 		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/wam.c">
+			<Option target="TomerPart"/>
+		</Unit>
+		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/wam.h">
 			<Option target="TomerPart"/>
 		</Unit>
 		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/CMakeLists.txt">

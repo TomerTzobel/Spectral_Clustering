@@ -4,14 +4,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "utils.c"
-#include "ddg.c"
-#include "wam.c"
+
+#include "utils.h"
+#include "ddg.h"
+#include "wam.h"
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define FLT_MAX 3.402823e+38
 #define ERR_MSG "An Error Has Occured"
+
+#define LOCAL_PATH "C:\\Users\\adamk\\gitpractice\\spectral\\Spectral_Clustering\\TomerPart\\input_1.txt"
+//#define LOCAL_PATH "C:\\Users\\user\\Desktop\\input_1.txt"
 
 
 double **lnorm(double **datapoints, int n, int dimension) {
@@ -54,14 +58,14 @@ int main(int argc, char **argv) {
 //    assert(isNumber(argv[1]) && "1st arg is not a number");
     k = atoi(argv[1]);
 
-    fp = fopen("C:\\Users\\user\\Desktop\\input_1.txt", "r");
+    fp = fopen(LOCAL_PATH, "r");
     assert(fp != NULL && "failed to open file");
     while ((ch = fgetc(fp)) != 10) /*check the dimension of the vectors*/
     {
         if (ch == ',')
             dimension++;
     }
-    fp = fopen("C:\\Users\\user\\Desktop\\input_1.txt", "r");
+    fp = fopen(LOCAL_PATH, "r");
     while ((ch = fgetc(fp)) != EOF) /*check the number of the vectors*/
     {
         currlinelen++;
@@ -86,7 +90,7 @@ int main(int argc, char **argv) {
         centroids[i] = malloc(dimension * sizeof(double));
         assert(centroids[i] != NULL && "malloc failed");
     }
-    fp = fopen("C:\\Users\\user\\Desktop\\input_1.txt", "r");
+    fp = fopen(LOCAL_PATH, "r");
     i = 0;
     line = malloc(maxlinelen * sizeof(char));
     while (fgets(line, maxlinelen + 1, fp) != NULL) {
@@ -99,7 +103,7 @@ int main(int argc, char **argv) {
         }
         i++;
     }
-    fp = fopen("C:\\Users\\user\\Desktop\\input_1.txt", "r");
+    fp = fopen(LOCAL_PATH, "r");
     /*INIT CLUSTERS*/
     assert(NULL != (clusters = calloc(pointsNumber, sizeof(int))) && "calloc failed");
     for (i = 0; i < pointsNumber; i++) {

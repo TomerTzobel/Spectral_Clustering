@@ -1,9 +1,5 @@
-
-
-#include "utils.c"
-#include "wam.c"
-
-
+#include "utils.h"
+#include "wam.h"
 
 double** eval_ddg(double **weighted_matrix, int n) {
     int i,j;
