@@ -130,18 +130,18 @@ CMakeFiles/TomerPart.dir/wam.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/TomerPart.dir/wam.c.s"
 	C:\PROGRA~1\MINGW-~1\X86_64~1.0-P\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\adamk\gitpractice\spectral\Spectral_Clustering\TomerPart\wam.c -o CMakeFiles\TomerPart.dir\wam.c.s
 
-CMakeFiles/TomerPart.dir/lnorm.c.obj: CMakeFiles/TomerPart.dir/flags.make
-CMakeFiles/TomerPart.dir/lnorm.c.obj: ../lnorm.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\adamk\gitpractice\spectral\Spectral_Clustering\TomerPart\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/TomerPart.dir/lnorm.c.obj"
-	C:\PROGRA~1\MINGW-~1\X86_64~1.0-P\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\TomerPart.dir\lnorm.c.obj -c C:\Users\adamk\gitpractice\spectral\Spectral_Clustering\TomerPart\lnorm.c
+CMakeFiles/TomerPart.dir/jacobi.c.obj: CMakeFiles/TomerPart.dir/flags.make
+CMakeFiles/TomerPart.dir/jacobi.c.obj: ../jacobi.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\adamk\gitpractice\spectral\Spectral_Clustering\TomerPart\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/TomerPart.dir/jacobi.c.obj"
+	C:\PROGRA~1\MINGW-~1\X86_64~1.0-P\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\TomerPart.dir\jacobi.c.obj -c C:\Users\adamk\gitpractice\spectral\Spectral_Clustering\TomerPart\jacobi.c
 
-CMakeFiles/TomerPart.dir/lnorm.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/TomerPart.dir/lnorm.c.i"
-	C:\PROGRA~1\MINGW-~1\X86_64~1.0-P\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\adamk\gitpractice\spectral\Spectral_Clustering\TomerPart\lnorm.c > CMakeFiles\TomerPart.dir\lnorm.c.i
+CMakeFiles/TomerPart.dir/jacobi.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/TomerPart.dir/jacobi.c.i"
+	C:\PROGRA~1\MINGW-~1\X86_64~1.0-P\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\adamk\gitpractice\spectral\Spectral_Clustering\TomerPart\jacobi.c > CMakeFiles\TomerPart.dir\jacobi.c.i
 
-CMakeFiles/TomerPart.dir/lnorm.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/TomerPart.dir/lnorm.c.s"
-	C:\PROGRA~1\MINGW-~1\X86_64~1.0-P\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\adamk\gitpractice\spectral\Spectral_Clustering\TomerPart\lnorm.c -o CMakeFiles\TomerPart.dir\lnorm.c.s
+CMakeFiles/TomerPart.dir/jacobi.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/TomerPart.dir/jacobi.c.s"
+	C:\PROGRA~1\MINGW-~1\X86_64~1.0-P\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\adamk\gitpractice\spectral\Spectral_Clustering\TomerPart\jacobi.c -o CMakeFiles\TomerPart.dir\jacobi.c.s
 
 # Object files for target TomerPart
 TomerPart_OBJECTS = \
@@ -150,7 +150,7 @@ TomerPart_OBJECTS = \
 "CMakeFiles/TomerPart.dir/ddg.c.obj" \
 "CMakeFiles/TomerPart.dir/eigengap.c.obj" \
 "CMakeFiles/TomerPart.dir/wam.c.obj" \
-"CMakeFiles/TomerPart.dir/lnorm.c.obj"
+"CMakeFiles/TomerPart.dir/jacobi.c.obj"
 
 # External object files for target TomerPart
 TomerPart_EXTERNAL_OBJECTS =
@@ -160,7 +160,7 @@ TomerPart.exe: CMakeFiles/TomerPart.dir/utils.c.obj
 TomerPart.exe: CMakeFiles/TomerPart.dir/ddg.c.obj
 TomerPart.exe: CMakeFiles/TomerPart.dir/eigengap.c.obj
 TomerPart.exe: CMakeFiles/TomerPart.dir/wam.c.obj
-TomerPart.exe: CMakeFiles/TomerPart.dir/lnorm.c.obj
+TomerPart.exe: CMakeFiles/TomerPart.dir/jacobi.c.obj
 TomerPart.exe: CMakeFiles/TomerPart.dir/build.make
 TomerPart.exe: CMakeFiles/TomerPart.dir/linklibs.rsp
 TomerPart.exe: CMakeFiles/TomerPart.dir/objects1.rsp

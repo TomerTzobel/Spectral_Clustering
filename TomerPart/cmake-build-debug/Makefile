@@ -176,29 +176,29 @@ eigengap.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\TomerPart.dir\build.make CMakeFiles/TomerPart.dir/eigengap.c.s
 .PHONY : eigengap.c.s
 
-lnorm.obj: lnorm.c.obj
-.PHONY : lnorm.obj
+jacobi.obj: jacobi.c.obj
+.PHONY : jacobi.obj
 
 # target to build an object file
-lnorm.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\TomerPart.dir\build.make CMakeFiles/TomerPart.dir/lnorm.c.obj
-.PHONY : lnorm.c.obj
+jacobi.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TomerPart.dir\build.make CMakeFiles/TomerPart.dir/jacobi.c.obj
+.PHONY : jacobi.c.obj
 
-lnorm.i: lnorm.c.i
-.PHONY : lnorm.i
+jacobi.i: jacobi.c.i
+.PHONY : jacobi.i
 
 # target to preprocess a source file
-lnorm.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\TomerPart.dir\build.make CMakeFiles/TomerPart.dir/lnorm.c.i
-.PHONY : lnorm.c.i
+jacobi.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TomerPart.dir\build.make CMakeFiles/TomerPart.dir/jacobi.c.i
+.PHONY : jacobi.c.i
 
-lnorm.s: lnorm.c.s
-.PHONY : lnorm.s
+jacobi.s: jacobi.c.s
+.PHONY : jacobi.s
 
 # target to generate assembly for a file
-lnorm.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\TomerPart.dir\build.make CMakeFiles/TomerPart.dir/lnorm.c.s
-.PHONY : lnorm.c.s
+jacobi.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\TomerPart.dir\build.make CMakeFiles/TomerPart.dir/jacobi.c.s
+.PHONY : jacobi.c.s
 
 main.obj: main.c.obj
 .PHONY : main.obj
@@ -287,9 +287,9 @@ help:
 	@echo ... eigengap.obj
 	@echo ... eigengap.i
 	@echo ... eigengap.s
-	@echo ... lnorm.obj
-	@echo ... lnorm.i
-	@echo ... lnorm.s
+	@echo ... jacobi.obj
+	@echo ... jacobi.i
+	@echo ... jacobi.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

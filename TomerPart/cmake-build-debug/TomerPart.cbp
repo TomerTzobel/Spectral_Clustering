@@ -83,10 +83,10 @@
 		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/eigengap.c">
 			<Option target="TomerPart"/>
 		</Unit>
-		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/lnorm.c">
+		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/jacobi.c">
 			<Option target="TomerPart"/>
 		</Unit>
-		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/lnorm.h">
+		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/jacobi.h">
 			<Option target="TomerPart"/>
 		</Unit>
 		<Unit filename="C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/main.c">

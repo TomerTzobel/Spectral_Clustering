@@ -10,7 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_C
   "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/ddg.c" "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/cmake-build-debug/CMakeFiles/TomerPart.dir/ddg.c.obj"
   "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/eigengap.c" "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/cmake-build-debug/CMakeFiles/TomerPart.dir/eigengap.c.obj"
-  "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/lnorm.c" "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/cmake-build-debug/CMakeFiles/TomerPart.dir/lnorm.c.obj"
+  "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/jacobi.c" "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/cmake-build-debug/CMakeFiles/TomerPart.dir/jacobi.c.obj"
   "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/main.c" "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/cmake-build-debug/CMakeFiles/TomerPart.dir/main.c.obj"
   "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/utils.c" "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/cmake-build-debug/CMakeFiles/TomerPart.dir/utils.c.obj"
   "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/wam.c" "C:/Users/adamk/gitpractice/spectral/Spectral_Clustering/TomerPart/cmake-build-debug/CMakeFiles/TomerPart.dir/wam.c.obj"

@@ -22,4 +22,6 @@ void power_matrix_elementwise(double **matrix, int n, double x);
 
 void swap(double *xp, double *yp);
 
+double **get_I_matrix(int n);
+
 #endif //MAIN_C_UTILS_H

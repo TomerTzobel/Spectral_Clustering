@@ -98,3 +98,11 @@ void power_matrix_elementwise(double **matrix, int n, double x) {
         }
     }
 }
+
+double **get_I_matrix(int n) {
+    double **I = init_matrix(n, n);
+    for (int i = 0; i < n; i++) {
+        I[i][i] = 1;
+    }
+    return I;
+}
