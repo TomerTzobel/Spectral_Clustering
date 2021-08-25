@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "utils.h"
+#define Epsilon 1.0e-15
 
 double get_c(double **A, int i, int j);
 double get_s(double c);
@@ -57,31 +58,84 @@ double get_s(double c){
     return sqrt(1 - pow(c, 2));
 }
 
+/* STEP 3 PIVOT */
+void update_Pivot(int* pivot, double **A, int n){
+    double MaxValue;
+    pivots[0] = 0;
+    pivots[1] = 0;
+    MaxValue = A[0][0];
+    int replace = 0;
+    for (i = 0; i < n ; i++) {
+        for (j = i; j < n; j++) {
+            replace = 0;
+            if (A[i][j] > MaxValue)
+                replace = 1;
+            if (A[i][j] == MaxValue){
+                if (i < pivots[0])
+                    replace = 1
+                if (i == pivots[0] && j < pivots[1])
+                    replace = 1;
+            }
+            if (replace){0
+                pivots[0] = i;
+                pivots[1] = j;
+                MaxValue = A[i][j];
+            }
+        }
+    }
+
+};
+double frobenius_Norm_Pow(A,n){
+    int i,j;
+    double norm = 0;
+    for (i = 0; i < n; i++){
+        for (j = 0; j < n; j++){
+            norm += (double)pow(A[i][j],2);
+        }
+    }
+    return norm;
+}
+
+
+double doubleOff(A,n){
+    doubleOffA = 0;
+    double sumDigonal = 0;
+    for (i = 0; i < n; i++)
+            sum_Digonal_Pow += (double)pow(A[i][i],2);
+    doubleOffA = frobenius_Norm_Pow(A,n) - sum_Digonal_Pow;
+    doubleOffA = (double)pow(doubleOffA,2);
+    return doubleOffA;
+}
 /*
  *
  * STEP 5
  *
  */
-int is_converged() {return 0;};
-
-
+int converged(A,ATag,n) {
+    if (doubleOff(A,n) - doubleOff(ATag,n) <= Epsilon)
+        return 1;
+    return 0;
+}
 
 /* transform A -> A' */
-void transform_A(double **A, int n, int i, int j, double c, double s){
+double ** transform_A(double **A, int n, int i, int j, double c, double s){
+    double **ATag
+    Atag = init_matrix(n);
     double tmp_Ari, tmp_Arj;
     for (int r=0; r<n; r++){ // UNSURE THIS WORKS <<
         if (r == i || r == j)
             continue;
         tmp_Ari = c*A[r][i] - s*A[r][j];
         tmp_Arj = c*A[r][j] + s*A[r][i];
-        A[r][i] = tmp_Ari, A[i][r] = tmp_Ari;
-        A[r][j] = tmp_Arj, A[j][r] = tmp_Arj;
+        Atag[r][i] = tmp_Ari, Atag[i][r] = tmp_Ari;
+        Atag[r][j] = tmp_Arj, Atag[j][r] = tmp_Arj;
     }
     double tmp_Aii, tmp_Ajj;
     tmp_Aii = pow(c,2)*A[i][i] + pow(s,2)*A[j][j]-2*s*c*A[i][j];
     tmp_Ajj = pow(s,2)*A[i][i] + pow(c,2)*A[j][j]+2*s*c*A[i][j];
-    A[i][j] = 0, A[j][i] = 0;
-    A[i][i] = tmp_Aii, A[j][j] = tmp_Ajj;
+    Atag[i][j] = 0, Atag[j][i] = 0;
+    Atag[i][i] = tmp_Aii, Atag[j][j] = tmp_Ajj;
+    return ATag;
 }
 
 /*
@@ -92,17 +146,23 @@ double *jacobi_eigenvalues(double **A, int n){
     double *eigenvalues = calloc(n, sizeof(double));
     assert(eigenvalues != NULL && "calloc failed");
     int i, j, ITERATIONS = 100;
-    double **V = get_I_matrix(n);
+    double **V = get_I_matrix(n), **ATag;
     double c, s;
-    while((!is_converged) && ITERATIONS){
-        /*
-         * STEP 3 PIVOT - check this https://moodle.tau.ac.il/mod/forum/discuss.php?d=162299 and this https://moodle.tau.ac.il/mod/forum/discuss.php?d=159570
-         * need i and j in scope of loop
-         */
+    int pivot[2];
+    int is_converged = 0;
+    while(!is_converged && ITERATIONS){
 
+//         * STEP 3 PIVOT - check this https://moodle.tau.ac.il/mod/forum/discuss.php?d=162299 and this https://moodle.tau.ac.il/mod/forum/discuss.php?d=159570
+//         * need i and j in scope of loop
+
+        update_Pivot(pivot,A,n);
+        i = pivot[0];
+        j = pivot[1];
         double **P = get_rotation_matrix(A, n, i, j); // step a
         c = P[i][i], s = P[i][j];
-        transform_A(A, n, i, j, c, s); // step b
+        ATag = transform_A(A, n, i, j, c, s); // step b
+        is_converged = converged(A,ATag,n);
+        A = ATag;
 
         double **tmp_multiply = V; // step e
         V = multiply_matrices_same_dim(V, P, n);
