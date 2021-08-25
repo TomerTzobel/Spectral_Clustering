@@ -76,7 +76,7 @@ void update_Pivot(int* pivot, double **A, int n){
                 if (i == pivots[0] && j < pivots[1])
                     replace = 1;
             }
-            if (replace){0
+            if (replace){
                 pivots[0] = i;
                 pivots[1] = j;
                 MaxValue = A[i][j];
