@@ -8,14 +8,16 @@
 #include "utils.h"
 #include "ddg.h"
 #include "wam.h"
+#include "jacobi.h"
+
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define FLT_MAX 3.402823e+38
 #define ERR_MSG "An Error Has Occured"
 
-#define LOCAL_PATH "C:\\Users\\adamk\\gitpractice\\spectral\\Spectral_Clustering\\TomerPart\\input_1.txt"
-//#define LOCAL_PATH "C:\\Users\\user\\Desktop\\input_1.txt"
+//define LOCAL_PATH "C:\\Users\\adamk\\gitpractice\\spectral\\Spectral_Clustering\\TomerPart\\input_1.txt"
+#define LOCAL_PATH "C:\\Users\\user\\Desktop\\input_2.txt"
 
 
 double **lnorm(double **datapoints, int n, int dimension) {
@@ -117,11 +119,13 @@ int main(int argc, char **argv) {
     double **ddgmatirx;
     double **lnorm1;
     double **test;
-    wamMatrix = wam(points, pointsNumber, dimension);
-    ddgmatirx = ddg(points, pointsNumber, dimension);
-    lnorm1 = lnorm(points, pointsNumber, dimension);
+    //wamMatrix = wam(points, pointsNumber, dimension);
+    //ddgmatirx = ddg(points, pointsNumber, dimension);
+    //lnorm1 = lnorm(points, pointsNumber, dimension);
 
-    print_matrix(lnorm1, pointsNumber, pointsNumber);
+    jacobi_eigenvalues(points,pointsNumber);
+    printf("-----\n");
+    //print_matrix(lnorm1, pointsNumber, pointsNumber);
 
     for (i = 0; i < k; i++)
         free(centroids[i]);
