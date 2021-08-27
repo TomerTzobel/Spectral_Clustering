@@ -2,7 +2,6 @@
 // Created by adamk on 24/08/2021.
 //
 #include <stdio.h> //delete this later, only for priting
-
 #include <math.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -19,13 +18,8 @@ double **get_rotation_matrix(double **A, int n, int i, int j) {
     for (int k=0; k<n; k++){
         P[k][k] = 1;
     }
-    double c = get_c(A, i, j);
-    double s = get_s(A,i,j);
-    //CHECK THIS PART, UNCLEAR
-    P[i][i] = c;
-    P[i][j] = s;
-    P[j][i] = -s;
-    P[j][j] = c;
+    double c = get_c(A, i, j), s = get_s(A,i,j);
+    P[i][i] = c, P[i][j] = s, P[j][i] = -s, P[j][j] = c;
     printf("----\n");
     print_matrix(P,n,n);
     printf("----\n");
@@ -68,34 +62,18 @@ double get_s(double **A, int i, int j){
 
 /* STEP 3 PIVOT */
 void update_Pivot(int* pivot, double **A, int n){
-    double MaxValue;
+    double MaxValue = -1; // smaller than any abs val
     int i,j;
-    pivot[0] = 0;
-    pivot[1] = 1;
-    MaxValue = fabs(A[0][1]);
-    int replace = 0;
-    for (i = 0; i < n ; i++) {
-        for (j = i; j < n; j++) {
-            if (i != j){
-                replace = 0;
-                if (fabs(A[i][j]) > MaxValue)
-                    replace = 1;
-                if (fabs(A[i][j]) == MaxValue){
-                    if (i < pivot[0])
-                        replace = 1;
-                    if (i == pivot[0] && j < pivot[1])
-                        replace = 1;
-                }
-                if (replace) {
-                    pivot[0] = i;
-                    pivot[1] = j;
-                    MaxValue = A[i][j];
-                }
+    for (i = 0; i < n - 1; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (fabs(A[i][j]) > MaxValue){
+                pivot[0] = i, pivot[1] = j;
+                MaxValue = A[i][j];
             }
         }
     }
-
 };
+
 double frobenius_Norm_Pow(double **A,int n){
     int i,j;
     double norm = 0;
@@ -164,10 +142,6 @@ double *jacobi_eigenvalues(double **A, int n){
     int pivot[2];
     int is_converged = 0;
     while(!is_converged && ITERATIONS){
-
-//         * STEP 3 PIVOT - check this https://moodle.tau.ac.il/mod/forum/discuss.php?d=162299 and this https://moodle.tau.ac.il/mod/forum/discuss.php?d=159570
-//         * need i and j in scope of loop
-
         update_Pivot(pivot,A,n);
         i = pivot[0];
         j = pivot[1];
