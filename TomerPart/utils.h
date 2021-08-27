@@ -24,4 +24,10 @@ void swap(double *xp, double *yp);
 
 double **get_I_matrix(int n);
 
+double **copy_matrix(double **source, int rows, int cols);
+
+double **transpose_matrix(double **matrix, int rows, int cols);
+
+void print_arr(double *arr, int n);
+
 #endif //MAIN_C_UTILS_H

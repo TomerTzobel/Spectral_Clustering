@@ -16,8 +16,9 @@
 #define FLT_MAX 3.402823e+38
 #define ERR_MSG "An Error Has Occured"
 
-//define LOCAL_PATH "C:\\Users\\adamk\\gitpractice\\spectral\\Spectral_Clustering\\TomerPart\\input_1.txt"
-#define LOCAL_PATH "C:\\Users\\user\\Desktop\\input_2.txt"
+//#define LOCAL_PATH "C:\\Users\\adamk\\gitpractice\\spectral\\Spectral_Clustering\\TomerPart\\jacobi_input.txt"
+#define LOCAL_PATH "C:\\Users\\adamk\\gitpractice\\spectral\\Spectral_Clustering\\TomerPart\\test\\input_a_rami.txt"
+//#define LOCAL_PATH "C:\\Users\\user\\Desktop\\input_2.txt"
 
 
 double **lnorm(double **datapoints, int n, int dimension) {
@@ -121,11 +122,12 @@ int main(int argc, char **argv) {
     double **test;
     //wamMatrix = wam(points, pointsNumber, dimension);
     //ddgmatirx = ddg(points, pointsNumber, dimension);
-    //lnorm1 = lnorm(points, pointsNumber, dimension);
-
-    jacobi_eigenvalues(points,pointsNumber);
+    lnorm1 = lnorm(points, pointsNumber, dimension);
     printf("-----\n");
-    //print_matrix(lnorm1, pointsNumber, pointsNumber);
+    double *eigenvalues = jacobi_eigenvalues(lnorm1,pointsNumber);
+    print_arr(eigenvalues, pointsNumber);
+    printf("-----\n");
+
 
     for (i = 0; i < k; i++)
         free(centroids[i]);

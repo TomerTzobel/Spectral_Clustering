@@ -6,7 +6,7 @@
 #define MAIN_C_JACOBI_H
 
 double get_c(double **A, int i, int j);
-double get_s(double **A, int i, int j);
+double get_s(double c);
 double **get_rotation_matrix(double **A, int n, int i, int j);
 double get_theta(double **A, int i, int j);
 int sign(double theta);

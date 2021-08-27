@@ -16,6 +16,24 @@ double **init_matrix(int rows, int cols) {
     return matrix;
 }
 
+double **copy_matrix(double **source, int rows, int cols) {
+    double **cpy = init_matrix(rows, cols);
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            cpy[i][j] = source[i][j];
+        }
+    }
+    return cpy;
+}
+
+double **transpose_matrix(double **matrix, int rows, int cols) {
+    double **transpose = init_matrix(cols, rows);
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j) {
+            transpose[j][i] = matrix[i][j];
+        }
+    return transpose;
+}
 void print_matrix(double **matrix, int rows, int cols) {
     int i, j;
     for (i = 0; i < rows; i++) {
@@ -26,6 +44,13 @@ void print_matrix(double **matrix, int rows, int cols) {
         }
         printf("\n");
     }
+}
+
+void print_arr(double *arr, int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%.4f,", arr[i]);
+    }
+    printf("\n");
 }
 
 void free_matrix(double **matrix, int rows) {
