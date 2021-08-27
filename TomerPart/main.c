@@ -56,19 +56,23 @@ int main(int argc, char **argv) {
     int changed = 1;
     char *cordinate;
     char *line;
+    char *goal;
 
     assert(argc == 4 && "invalid number of args");
 //    assert(isNumber(argv[1]) && "1st arg is not a number");
     k = atoi(argv[1]);
+    goal = argv[2];
 
-    fp = fopen(LOCAL_PATH, "r");
+    fp = fopen(argv[2], "r");
     assert(fp != NULL && "failed to open file");
     while ((ch = fgetc(fp)) != 10) /*check the dimension of the vectors*/
     {
         if (ch == ',')
             dimension++;
+        if (ch == EOF)
+            break;
     }
-    fp = fopen(LOCAL_PATH, "r");
+    fp = fopen(argv[2], "r");
     while ((ch = fgetc(fp)) != EOF) /*check the number of the vectors*/
     {
         currlinelen++;
@@ -117,16 +121,43 @@ int main(int argc, char **argv) {
     }
     fclose(fp);
 
-    double **ddgmatirx;
-    double **lnorm1;
-    double **test;
-    //wamMatrix = wam(points, pointsNumber, dimension);
-    //ddgmatirx = ddg(points, pointsNumber, dimension);
-    lnorm1 = lnorm(points, pointsNumber, dimension);
-    printf("-----\n");
-    double *eigenvalues = jacobi_eigenvalues(lnorm1,pointsNumber);
-    print_arr(eigenvalues, pointsNumber);
-    printf("-----\n");
+    if (strcmp(goal,"wam") == 1){
+        double **wamMatrix = wam(points, pointsNumber, dimension);
+        print_matrix(wamMatrix);
+        free_matrix(wamMatrix,n);
+    }
+
+    if (strcmp(goal,"ddg") == 1){
+        double **ddgMatirx = ddg(points, pointsNumber, dimension);
+        print_matrix(ddgMatirx);
+        free_matrix(ddgMatirx,n);
+    }
+
+    if (strcmp(goal,"lnorm") == 1){
+        double **lnormMatirx = lnorm(points, pointsNumber, dimension);
+        print_matrix(wamMatrix);
+        free_matrix(wamMatrix,n);
+    }
+
+    if (strcmp(goal,"jacobi") == 1){
+        double *eigenvalues = jacobi_eigenvalues(points,pointsNumber);
+        print_arr(eigenvalues, pointsNumber);
+
+    }
+
+
+//    double **ddgmatirx;
+//    double **lnorm1;
+//    double **test;
+//    //wamMatrix = wam(points, pointsNumber, dimension);
+//    //ddgmatirx = ddg(points, pointsNumber, dimension);
+//    lnorm1 = lnorm(points, pointsNumber, dimension);
+//    printf("-----\n");
+//    double *eigenvalues = jacobi_eigenvalues(lnorm1,pointsNumber);
+//    print_arr(eigenvalues, pointsNumber);
+//    printf("-----\n");
+
+
 
 
     for (i = 0; i < k; i++)
