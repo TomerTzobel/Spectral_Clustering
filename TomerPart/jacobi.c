@@ -61,11 +61,11 @@ void update_Pivot(int* pivot, double **A, int n){
     int i,j;
     for (i = 0; i < n - 1; i++) {
         for (j = i + 1; j < n; j++) {
-            if (fabs(A[i][j]) > MaxValue){
+            if (fabs(A[i][j]) > MaxValue) {
                 pivot[0] = i, pivot[1] = j;
                 MaxValue = fabs(A[i][j]);
             }
-            if (fabs(A[i][j]) == MaxValue){
+            if (fabs(A[i][j]) == MaxValue) {
                 if (i < pivot[0]) {
                     pivot[0] = i, pivot[1] = j;
                     MaxValue = fabs(A[i][j]);
@@ -78,6 +78,7 @@ void update_Pivot(int* pivot, double **A, int n){
         }
     }
 }
+
 
 double frobenius_Norm_Pow(double **A,int n){
     int i,j;
@@ -129,7 +130,7 @@ double ** transform_A(double **A, int n, int i, int j, double c, double s){
  * STEP 1 - full jacobi
  * check if P_n needs to be calculated https://moodle.tau.ac.il/mod/forum/discuss.php?d=162730
  */
-double *jacobi_eigenvalues(double **A, int n){
+double *jacobi_eigenvectors(double **A, int n){ //print eigenvalues and return eigenvectors
     double *eigenvalues = calloc(n, sizeof(double));
     assert(eigenvalues != NULL && "calloc failed");
     int i, j, ITERATIONS = 100;
@@ -154,13 +155,12 @@ double *jacobi_eigenvalues(double **A, int n){
         ITERATIONS -= 1;
     }
     free_matrix(P, n);
-    print_matrix(V,n,n);
-    free_matrix(V, n);
     for (i=0; i<n; i++){
         eigenvalues[i] =  ATag[i][i];
     }
-    free_matrix(ATag, n);
-    return eigenvalues;
+    print_arr(eigenvalues,n);
+    free(eigenvalues);
+    return V;
 }
 
 

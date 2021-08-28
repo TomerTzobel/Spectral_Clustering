@@ -42,13 +42,18 @@ void print_matrix(double **matrix, int rows, int cols) {
             if (j < cols - 1)
                 printf(",");
         }
-        printf("\n");
+        if (i != rows -1)
+            printf("\n");
     }
 }
 
 void print_arr(double *arr, int n) {
+
     for (int i = 0; i < n; i++) {
-        printf("%.4f,", arr[i]);
+        if ( i != n - 1)
+            printf("%.4f,", arr[i]);
+        else
+            printf("%.4f", arr[i]);
     }
     printf("\n");
 }

@@ -17,7 +17,7 @@
 #define ERR_MSG "An Error Has Occured"
 
 //#define LOCAL_PATH "C:\\Users\\adamk\\gitpractice\\spectral\\Spectral_Clustering\\TomerPart\\jacobi_input.txt"
-#define LOCAL_PATH "C:\\Users\\adamk\\gitpractice\\spectral\\Spectral_Clustering\\TomerPart\\test\\input_a_rami.txt"
+//#define LOCAL_PATH "C:\\Users\\adamk\\gitpractice\\spectral\\Spectral_Clustering\\TomerPart\\test\\input_a_rami.txt"
 //#define LOCAL_PATH "C:\\Users\\user\\Desktop\\input_2.txt"
 
 
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
     int *clusters;
     int max_itter = 200;
     int dimension = 1;
-    int pointsNumber = 0;
+    int pointsNumber = 1;
     int maxlinelen = 0;
     int currlinelen = 0;
     int k, i, j, ch, ClusterNumber;
@@ -58,13 +58,12 @@ int main(int argc, char **argv) {
     char *line;
     char *goal;
 
-    assert(argc == 4 && "invalid number of args");
+    assert(argc == 4 && ERR_MSG);
 //    assert(isNumber(argv[1]) && "1st arg is not a number");
     k = atoi(argv[1]);
     goal = argv[2];
-
-    fp = fopen(argv[2], "r");
-    assert(fp != NULL && "failed to open file");
+    fp = fopen(argv[3], "r");
+    assert(fp != NULL && ERR_MSG);
     while ((ch = fgetc(fp)) != 10) /*check the dimension of the vectors*/
     {
         if (ch == ',')
@@ -72,7 +71,8 @@ int main(int argc, char **argv) {
         if (ch == EOF)
             break;
     }
-    fp = fopen(argv[2], "r");
+
+    fp = fopen(argv[3], "r");
     while ((ch = fgetc(fp)) != EOF) /*check the number of the vectors*/
     {
         currlinelen++;
@@ -85,34 +85,34 @@ int main(int argc, char **argv) {
 
     /*malloc points matrix and read points */
     points = malloc(pointsNumber * sizeof(double *));
-    assert(points != NULL && "malloc failed");
+    assert(points != NULL && ERR_MSG);
 
     for (i = 0; i < pointsNumber; i++) {
         points[i] = malloc(dimension * sizeof(double));
-        assert(points[i] != NULL && "malloc failed");
+        assert(points[i] != NULL && ERR_MSG);
     }
     centroids = malloc(k * sizeof(double *));
-    assert(centroids != NULL && "malloc failed");
+    assert(centroids != NULL && ERR_MSG);
     for (i = 0; i < k; i++) {
         centroids[i] = malloc(dimension * sizeof(double));
-        assert(centroids[i] != NULL && "malloc failed");
+        assert(centroids[i] != NULL && ERR_MSG);
     }
-    fp = fopen(LOCAL_PATH, "r");
+    fp = fopen(argv[3], "r");
     i = 0;
     line = malloc(maxlinelen * sizeof(char));
     while (fgets(line, maxlinelen + 1, fp) != NULL) {
         cordinate = strtok(line, ",");
         for (j = 0; j < dimension; j++) {
-            points[i][j] = atof(cordinate);
+            points[i][j] = atof(cordinate); //problem
             if (i < k)
                 centroids[i][j] = atof(cordinate);
             cordinate = strtok(NULL, ",");
         }
         i++;
     }
-    fp = fopen(LOCAL_PATH, "r");
+    fp = fopen(argv[3], "r");
     /*INIT CLUSTERS*/
-    assert(NULL != (clusters = calloc(pointsNumber, sizeof(int))) && "calloc failed");
+    assert(NULL != (clusters = calloc(pointsNumber, sizeof(int))) && ERR_MSG);
     for (i = 0; i < pointsNumber; i++) {
         if (i < k)
             clusters[i] = i;
@@ -121,43 +121,33 @@ int main(int argc, char **argv) {
     }
     fclose(fp);
 
-    if (strcmp(goal,"wam") == 1){
+    if (strcmp(goal,"wam") == 0){
         double **wamMatrix = wam(points, pointsNumber, dimension);
-        print_matrix(wamMatrix);
-        free_matrix(wamMatrix,n);
+        print_matrix(wamMatrix,pointsNumber,pointsNumber);
+        free_matrix(wamMatrix,pointsNumber);
     }
 
-    if (strcmp(goal,"ddg") == 1){
+    if (strcmp(goal,"ddg") == 0){
         double **ddgMatirx = ddg(points, pointsNumber, dimension);
-        print_matrix(ddgMatirx);
-        free_matrix(ddgMatirx,n);
+        print_matrix(ddgMatirx,pointsNumber,pointsNumber);
+        free_matrix(ddgMatirx,pointsNumber);
     }
 
-    if (strcmp(goal,"lnorm") == 1){
+    if (strcmp(goal,"lnorm") == 0){
         double **lnormMatirx = lnorm(points, pointsNumber, dimension);
-        print_matrix(wamMatrix);
-        free_matrix(wamMatrix,n);
+        print_matrix(lnormMatirx,pointsNumber,pointsNumber);
+        free_matrix(lnormMatirx,pointsNumber);
     }
 
-    if (strcmp(goal,"jacobi") == 1){
-        double *eigenvalues = jacobi_eigenvalues(points,pointsNumber);
-        print_arr(eigenvalues, pointsNumber);
-
+    if (strcmp(goal,"jacobi") == 0){
+        double **eigenvectors = jacobi_eigenvectors(points,pointsNumber);
+        print_matrix(eigenvectors,pointsNumber,pointsNumber);
+        free_matrix(eigenvectors,pointsNumber);
     }
 
-
-//    double **ddgmatirx;
-//    double **lnorm1;
-//    double **test;
-//    //wamMatrix = wam(points, pointsNumber, dimension);
-//    //ddgmatirx = ddg(points, pointsNumber, dimension);
-//    lnorm1 = lnorm(points, pointsNumber, dimension);
-//    printf("-----\n");
-//    double *eigenvalues = jacobi_eigenvalues(lnorm1,pointsNumber);
-//    print_arr(eigenvalues, pointsNumber);
-//    printf("-----\n");
-
-
+    if (strcmp(goal,"spk") == 0){
+      //to fill
+    }
 
 
     for (i = 0; i < k; i++)
