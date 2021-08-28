@@ -90,6 +90,7 @@ int main(int argc, char **argv) {
     }
     fclose(fp);
     free(line);
+    free(coordinate);
 
     if (strcmp(goal,"wam") == 0){
         double **wamMatrix = wam(points, pointsNumber, dimension);
@@ -122,6 +123,7 @@ int main(int argc, char **argv) {
       free_matrix(lnorm_matrix, n);
       double *eigenvalues = V[pointsNumber];
       int *sorted_eigenvectors_indices = bubbleSort_index_tracked(eigenvalues, n);
+      print_arr(sorted_eigenvectors_indices, n);
       if (k == 0){
           k = get_elbow_k(eigenvalues, pointsNumber);
       }

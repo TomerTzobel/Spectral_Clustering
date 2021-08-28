@@ -140,7 +140,7 @@ int* bubbleSort_index_tracked(double arr[], int n) {
     int i, j, swapped;
     int *indices = malloc(n * sizeof(int));
     assert(indices != NULL && ERR_MSG);
-    for (i = 0; i < n - 1; i++) {
+    for (i = 0; i < n; i++) {
         indices[i] = i;
     }
     for (i = 0; i < n - 1; i++) {
