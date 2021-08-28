@@ -7,6 +7,7 @@
 #include <assert.h>
 #include "utils.h"
 #define Epsilon 1.0e-15
+#define ERR_MSG "An Error Has Occured"
 
 double get_c(double **A, int i, int j);
 double get_s(double **A, int i, int j);
@@ -99,7 +100,8 @@ int converged(double **A,double **ATag,int n) {
 
 /* transform A -> A' */
 double ** transform_A(double **A, int n, int i, int j, double c, double s){
-    double **ATag = copy_matrix(A, n, n);
+    double **ATag = init_matrix(n,n);
+    copy_matrix(A, ATag, n, n);
     double tmp;
     for (int r = 0; r < n; r++){
         if (r == i || r == j)
@@ -119,22 +121,20 @@ double ** transform_A(double **A, int n, int i, int j, double c, double s){
  * STEP 1 - full jacobi
  * check if P_n needs to be calculated https://moodle.tau.ac.il/mod/forum/discuss.php?d=162730
  */
-double *jacobi_eigenvectors(double **A, int n){ //print eigenvalues and return eigenvectors
-    double *eigenvalues = calloc(n, sizeof(double));
-    assert(eigenvalues != NULL && "calloc failed");
+double **jacobi_eigenvectors(double **A, int n) {
     int i, j, ITERATIONS = 100;
     double **V = get_I_matrix(n), **P = get_I_matrix(n), **ATag;
     double c, s;
     int pivot[2];
     int is_converged = 0;
-    while(!is_converged && ITERATIONS){
-        update_Pivot(pivot,A,n);
+    while (!is_converged && ITERATIONS) {
+        update_Pivot(pivot, A, n);
         i = pivot[0];
         j = pivot[1];
         update_rotation_matrix(A, n, i, j, P); // step a
         c = P[i][i], s = P[i][j];
         ATag = transform_A(A, n, i, j, c, s); // step b
-        is_converged = converged(A,ATag,n);
+        is_converged = converged(A, ATag, n);
         free_matrix(A, n);
         A = ATag;
         double **tmp_multiply = V; // step e
@@ -144,12 +144,13 @@ double *jacobi_eigenvectors(double **A, int n){ //print eigenvalues and return e
         ITERATIONS -= 1;
     }
     free_matrix(P, n);
-    for (i=0; i<n; i++){
-        eigenvalues[i] =  ATag[i][i];
+    double **output = init_matrix(n+1, n); // hack to include eigenvalues in matrix last row
+    copy_matrix(V, output, n, n);
+    free_matrix(V, n);
+    for (i = 0; i < n; i++) {
+        output[n][i] = ATag[i][i];
     }
-    print_arr(eigenvalues,n);
-    free(eigenvalues);
-    return V;
+    return output;
 }
 
 

@@ -6,11 +6,10 @@
 #include <stdlib.h>
 #include "utils.h"
 
-/* find ideal k given eigenvalues*/
+/* find ideal k given sorted eigenvalues*/
 int get_elbow_k(double *eigenvalues, int n) {
     int i, k;
     double max = -1;
-    bubbleSort(eigenvalues, n);
     double *gaps = calloc(n/2 + 1, sizeof (double)); // extra element for easy indexing
     for (i = 1; i < n/2 + 1 ; i++) {
         gaps[i] = fabs(eigenvalues[i] - eigenvalues[i+1]);
@@ -19,5 +18,6 @@ int get_elbow_k(double *eigenvalues, int n) {
             max = gaps[i];
         }
     }
+    free(gaps);
     return k;
 }

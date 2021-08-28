@@ -9,7 +9,7 @@
 #include "ddg.h"
 #include "wam.h"
 #include "jacobi.h"
-
+#include "eigengap.h"
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -24,42 +24,34 @@
 double **lnorm(double **datapoints, int n, int dimension) {
     double **wamMatrix = wam(datapoints, n, dimension);
     double **DDGMatrix = eval_ddg(wamMatrix, n);
-    double **tmp_multiply, **lnorm;
+    double **tmp_multiply, **lnorm_matrix;
     int i, j;
     power_matrix_elementwise(DDGMatrix, n, ((double) -1 / (double) 2)); //D^(-1/2)
     tmp_multiply = multiply_matrices_same_dim(DDGMatrix, wamMatrix, n);
     free_matrix(wamMatrix, n);
-    lnorm = multiply_matrices_same_dim(tmp_multiply, DDGMatrix, n); //D^(-1/2) * W * D^(-1/2)
+    lnorm_matrix = multiply_matrices_same_dim(tmp_multiply, DDGMatrix, n); //D^(-1/2) * W * D^(-1/2)
     free_matrix(DDGMatrix, n);
     free_matrix(tmp_multiply, n);
     for (i = 0; i < n; i++) { //I - D^(-1/2) * W * D^(-1/2)
         for (j = 0; j < n; j++) {
             if (i == j)
-                lnorm[i][j] = 1 - lnorm[i][j];
+                lnorm_matrix[i][j] = 1 - lnorm_matrix[i][j];
             else
-                lnorm[i][j] = 0 - lnorm[i][j];
+                lnorm_matrix[i][j] = 0 - lnorm_matrix[i][j];
         }
     }
-    return lnorm;
+    return lnorm_matrix;
 }
 
 int main(int argc, char **argv) {
-    double **points, **centroids, **wamMatrix;
-    int *clusters;
-    int max_itter = 200;
-    int dimension = 1;
-    int pointsNumber = 1;
-    int maxlinelen = 0;
-    int currlinelen = 0;
-    int k, i, j, ch, ClusterNumber;
+    double **points;
+    int dimension = 1, pointsNumber = 1;
+    int maxlinelen = 0, currlinelen = 0;
+    int k, i, j, ch;
     FILE *fp;
-    int changed = 1;
-    char *cordinate;
-    char *line;
-    char *goal;
+    char *coordinate, *line, *goal;
 
     assert(argc == 4 && ERR_MSG);
-//    assert(isNumber(argv[1]) && "1st arg is not a number");
     k = atoi(argv[1]);
     goal = argv[2];
     fp = fopen(argv[3], "r");
@@ -84,42 +76,20 @@ int main(int argc, char **argv) {
     }
 
     /*malloc points matrix and read points */
-    points = malloc(pointsNumber * sizeof(double *));
-    assert(points != NULL && ERR_MSG);
-
-    for (i = 0; i < pointsNumber; i++) {
-        points[i] = malloc(dimension * sizeof(double));
-        assert(points[i] != NULL && ERR_MSG);
-    }
-    centroids = malloc(k * sizeof(double *));
-    assert(centroids != NULL && ERR_MSG);
-    for (i = 0; i < k; i++) {
-        centroids[i] = malloc(dimension * sizeof(double));
-        assert(centroids[i] != NULL && ERR_MSG);
-    }
+    points = init_matrix(pointsNumber, dimension);
     fp = fopen(argv[3], "r");
     i = 0;
     line = malloc(maxlinelen * sizeof(char));
     while (fgets(line, maxlinelen + 1, fp) != NULL) {
-        cordinate = strtok(line, ",");
+        coordinate = strtok(line, ",");
         for (j = 0; j < dimension; j++) {
-            points[i][j] = atof(cordinate); //problem
-            if (i < k)
-                centroids[i][j] = atof(cordinate);
-            cordinate = strtok(NULL, ",");
+            points[i][j] = atof(coordinate);
+            coordinate = strtok(NULL, ",");
         }
         i++;
     }
-    fp = fopen(argv[3], "r");
-    /*INIT CLUSTERS*/
-    assert(NULL != (clusters = calloc(pointsNumber, sizeof(int))) && ERR_MSG);
-    for (i = 0; i < pointsNumber; i++) {
-        if (i < k)
-            clusters[i] = i;
-        else
-            clusters[i] = -1;
-    }
     fclose(fp);
+    free(line);
 
     if (strcmp(goal,"wam") == 0){
         double **wamMatrix = wam(points, pointsNumber, dimension);
@@ -128,36 +98,40 @@ int main(int argc, char **argv) {
     }
 
     if (strcmp(goal,"ddg") == 0){
-        double **ddgMatirx = ddg(points, pointsNumber, dimension);
-        print_matrix(ddgMatirx,pointsNumber,pointsNumber);
-        free_matrix(ddgMatirx,pointsNumber);
+        double **ddgMatrix = ddg(points, pointsNumber, dimension);
+        print_matrix(ddgMatrix, pointsNumber, pointsNumber);
+        free_matrix(ddgMatrix, pointsNumber);
     }
 
     if (strcmp(goal,"lnorm") == 0){
-        double **lnormMatirx = lnorm(points, pointsNumber, dimension);
-        print_matrix(lnormMatirx,pointsNumber,pointsNumber);
-        free_matrix(lnormMatirx,pointsNumber);
+        double **lnormMatrix = lnorm(points, pointsNumber, dimension);
+        print_matrix(lnormMatrix, pointsNumber, pointsNumber);
+        free_matrix(lnormMatrix, pointsNumber);
     }
 
     if (strcmp(goal,"jacobi") == 0){
         double **eigenvectors = jacobi_eigenvectors(points,pointsNumber);
         print_matrix(eigenvectors,pointsNumber,pointsNumber);
-        free_matrix(eigenvectors,pointsNumber);
+        free_matrix(eigenvectors,pointsNumber+1);
     }
 
     if (strcmp(goal,"spk") == 0){
-      //to fill
+      int n = pointsNumber;
+      double **lnorm_matrix = lnorm(points, n, dimension);
+      double **V = jacobi_eigenvectors(lnorm_matrix, pointsNumber);
+      free_matrix(lnorm_matrix, n);
+      double *eigenvalues = V[pointsNumber];
+      int *sorted_eigenvectors_indices = bubbleSort_index_tracked(eigenvalues, n);
+      if (k == 0){
+          k = get_elbow_k(eigenvalues, pointsNumber);
+      }
+      double **U = copy_columns_by_order(V, n, k, sorted_eigenvectors_indices);
+      free_matrix(V, n+1);
+      free(sorted_eigenvectors_indices);
+      normalize_matrix(U, n, k); // T
+//      kmeans(data)
     }
 
-
-    for (i = 0; i < k; i++)
-        free(centroids[i]);
-    free(centroids);
-    for (i = 0; i < pointsNumber; i++)
-        free(points[i]);
-    free(points);
-    free(clusters);
-    free(line);
 
     return 0;
 }

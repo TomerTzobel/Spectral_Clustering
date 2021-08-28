@@ -17,7 +17,7 @@ double frobenius_Norm_Pow(double **A,int n);
 double doubleOff(double **A,int n);
 int converged(double **A,double **ATag,int n);
 double ** transform_A(double **A, int n, int i, int j, double c, double s);
-double *jacobi_eigenvectors(double **A, int n);
+double **jacobi_eigenvectors(double **A, int n);
 
 
 #endif //MAIN_C_JACOBI_H

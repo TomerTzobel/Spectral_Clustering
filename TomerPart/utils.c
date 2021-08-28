@@ -16,14 +16,38 @@ double **init_matrix(int rows, int cols) {
     return matrix;
 }
 
-double **copy_matrix(double **source, int rows, int cols) {
-    double **cpy = init_matrix(rows, cols);
+void copy_matrix(double **source, double **dest, int rows, int cols) {
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            cpy[i][j] = source[i][j];
+            dest[i][j] = source[i][j];
+        }
+    }
+}
+
+double **copy_columns_by_order(double **source, int rows, int cols, int* order){
+    double **cpy = init_matrix(rows, cols);
+    int curr_col;
+    for (int j = 0; j < cols; j++) {
+        curr_col = order[j];
+        for (int i = 0; i < rows; i++) {
+            cpy[i][curr_col] = source[i][curr_col];
         }
     }
     return cpy;
+}
+
+void normalize_matrix(double **matrix, int rows, int cols){
+    double sum_squared, denominator;
+    for (int i = 0; i < rows; i++) {
+        sum_squared = 0;
+        for (int j = 0; j < cols; j++) {
+            sum_squared += pow(matrix[i][j], 2);
+        }
+        denominator = sqrt(sum_squared);
+        for (int j = 0; j < cols; j++) {
+            matrix[i][j] = matrix[i][j] / denominator;
+        }
+    }
 }
 
 double **transpose_matrix(double **matrix, int rows, int cols) {
@@ -34,11 +58,17 @@ double **transpose_matrix(double **matrix, int rows, int cols) {
         }
     return transpose;
 }
+
 void print_matrix(double **matrix, int rows, int cols) {
     int i, j;
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
-            printf("%.4f", matrix[i][j]);
+            if (matrix[i][j] < 0 && matrix[i][j] > -0.00005){
+                printf("0.0000");
+            }
+            else {
+                printf("%.4f", matrix[i][j]);
+            }
             if (j < cols - 1)
                 printf(",");
         }
@@ -99,16 +129,27 @@ void swap(double *xp, double *yp) {
     *xp = *yp;
     *yp = temp;
 }
+void swap_int(int *xp, int *yp) {
+    int temp = *xp;
+    *xp = *yp;
+    *yp = temp;
+}
 
 /* code by GFG, with our minor optimization */
-void bubbleSort(double arr[], int n) {
+int* bubbleSort_index_tracked(double arr[], int n) {
     int i, j, swapped;
+    int *indices = malloc(n * sizeof(int));
+    assert(indices != NULL && ERR_MSG);
+    for (i = 0; i < n - 1; i++) {
+        indices[i] = i;
+    }
     for (i = 0; i < n - 1; i++) {
         swapped = 0;
         // Last i elements are already in place
         for (j = 0; j < n - i - 1; j++) {
             if (arr[j] > arr[j + 1]) {
                 swap(&arr[j], &arr[j + 1]);
+                swap_int(&indices[j], &indices[j + 1]);
                 swapped = 1;
             }
         }
@@ -116,6 +157,7 @@ void bubbleSort(double arr[], int n) {
             break;
         }
     }
+    return indices;
 }
 
 /* inplace power matrix elementwise by x */

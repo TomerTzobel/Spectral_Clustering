@@ -17,5 +17,6 @@ double **wam(double **datapoints, int n, int dimension) {
             wamMatrix[j][i] = result; // symmetry of W
         }
     }
+    free_matrix(datapoints, n);
     return wamMatrix;
 }
