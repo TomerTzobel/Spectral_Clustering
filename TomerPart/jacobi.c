@@ -61,24 +61,13 @@ void update_Pivot(int* pivot, double **A, int n){
     int i,j;
     for (i = 0; i < n - 1; i++) {
         for (j = i + 1; j < n; j++) {
-            if (fabs(A[i][j]) > MaxValue) {
+            if (fabs(A[i][j]) > MaxValue){
                 pivot[0] = i, pivot[1] = j;
                 MaxValue = fabs(A[i][j]);
-            }
-            if (fabs(A[i][j]) == MaxValue) {
-                if (i < pivot[0]) {
-                    pivot[0] = i, pivot[1] = j;
-                    MaxValue = fabs(A[i][j]);
-                }
-                if (i == pivot[0] && j < pivot[1]) {
-                    pivot[0] = i, pivot[1] = j;
-                    MaxValue = fabs(A[i][j]);
-                }
             }
         }
     }
 }
-
 
 double frobenius_Norm_Pow(double **A,int n){
     int i,j;
