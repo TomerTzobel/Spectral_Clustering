@@ -118,12 +118,10 @@ int main(int argc, char **argv) {
 
     if (strcmp(goal,"spk") == 0){
       int n = pointsNumber;
-      double **lnorm_matrix = lnorm(points, n, dimension);
+      double **lnorm_matrix = lnorm(points, n, dimension); 
       double **V = jacobi_eigenvectors(lnorm_matrix, pointsNumber);
-      free_matrix(lnorm_matrix, n);
       double *eigenvalues = V[pointsNumber];
       int *sorted_eigenvectors_indices = bubbleSort_index_tracked(eigenvalues, n);
-      print_arr(sorted_eigenvectors_indices, n);
       if (k == 0){
           k = get_elbow_k(eigenvalues, pointsNumber);
       }
@@ -131,7 +129,7 @@ int main(int argc, char **argv) {
       free_matrix(V, n+1);
       free(sorted_eigenvectors_indices);
       normalize_matrix(U, n, k); // T
-//      kmeans(data)
+//    kmeans(data)
     }
 
 

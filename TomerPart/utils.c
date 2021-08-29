@@ -5,6 +5,9 @@
 
 #define ERR_MSG "An Error Has Occured"
 
+void print_matrix(double **matrix, int rows, int cols); //delete later, just for tests
+
+
 /* init matrix of zeros */
 double **init_matrix(int rows, int cols) {
     double **matrix = malloc(rows * sizeof(double *));
@@ -26,11 +29,12 @@ void copy_matrix(double **source, double **dest, int rows, int cols) {
 
 double **copy_columns_by_order(double **source, int rows, int cols, int* order){
     double **cpy = init_matrix(rows, cols);
-    int curr_col;
-    for (int j = 0; j < cols; j++) {
-        curr_col = order[j];
-        for (int i = 0; i < rows; i++) {
-            cpy[i][curr_col] = source[i][curr_col];
+    int curr_row;
+    int j,i;
+    for (j = 0; j < cols; j++) {
+        curr_row = order[j];
+        for (i = 0; i < rows; i++) {
+            cpy[i][j] = source[curr_row][i];
         }
     }
     return cpy;
@@ -136,9 +140,9 @@ void swap_int(int *xp, int *yp) {
 }
 
 /* code by GFG, with our minor optimization */
-int* bubbleSort_index_tracked(double arr[], int n) {
+int* bubbleSort_index_tracked(double* arr, int n) {
     int i, j, swapped;
-    int *indices = malloc(n * sizeof(int));
+    int* indices = malloc(n * sizeof(int));
     assert(indices != NULL && ERR_MSG);
     for (i = 0; i < n; i++) {
         indices[i] = i;
