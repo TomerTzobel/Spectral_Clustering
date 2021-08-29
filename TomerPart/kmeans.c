@@ -3,12 +3,13 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
+#include "utils.h"
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define FLT_MAX 3.402823e+38
 
-int findMinCent(double *point, double **centroeids, int k, int dimension)
+int findMinCent(double *point, double **centroids, int k, int dimension)
 {
     double min_val = FLT_MAX;
     int min_idx;
@@ -20,7 +21,7 @@ int findMinCent(double *point, double **centroeids, int k, int dimension)
         curr_val = 0.0;
         for (j = 0; j < dimension; j++)
         {
-            num = point[j] - centroeids[i][j];
+            num = point[j] - centroids[i][j];
             curr_val = curr_val + (num * num);
         }
         if (curr_val < min_val)
@@ -93,24 +94,14 @@ int UpdateAllAvg(double **centroids, int *clusters, double **points, int k, int 
 double **kmeans(int k, int n, double **points)
 {
     int *clusters;
-    int max_iter = 300;
-    int dimension = k;
-    int pointsNumber = n;
-    int k, i, j, ClusterNumber;
-    int changed = 1;
+    int max_iter = 300, dimension = k, pointsNumber = n, changed = 1;
+    int i, j, ClusterNumber;
 
 
-    double **centroids = malloc(k * sizeof(double *));
-    assert(centroids != NULL && "malloc failed");
-    for (i = 0; i < k; i++)
-    {
-        centroids[i] = malloc(dimension * sizeof(double));
-        assert(centroids[i] != NULL && "malloc failed");
-    }
-
+    double **centroids = init_matrix(k, k);
     for (i = 0; i < k; i++){
         for (j = 0; j < k; j++){
-            centroids[i][j] = points[i][j]
+            centroids[i][j] = points[i][j];
         }
     }
 
@@ -124,10 +115,10 @@ double **kmeans(int k, int n, double **points)
             clusters[i] = -1;
     }
 
-    while (max_itter > 0 && changed)
+    while (max_iter > 0 && changed)
     {
         changed = 0;
-        max_itter--;
+        max_iter--;
         for (i = 0; i < pointsNumber; i++)
         {
             ClusterNumber = findMinCent(points[i], centroids, k, dimension);
@@ -136,22 +127,7 @@ double **kmeans(int k, int n, double **points)
         changed = UpdateAllAvg(centroids, clusters, points, k, pointsNumber, dimension);
     }
 
-    for (i = 0; i < k; i++)
-        free(centroids[i]);
-    free(centroids);
     free(clusters);
 
-    return 0;
-}
-
-int isNumber(char *stringNum)
-{
-    int length, i;
-    length = strlen(stringNum);
-    for (i = 0; i < length; i++)
-        if (!isdigit(stringNum[i]))
-        {
-            return 0;
-        }
-    return 1;
+    return centroids;
 }

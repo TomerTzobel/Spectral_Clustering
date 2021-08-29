@@ -10,6 +10,7 @@
 #include "wam.h"
 #include "jacobi.h"
 #include "eigengap.h"
+#include "kmeans.h"
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -128,8 +129,9 @@ int main(int argc, char **argv) {
       double **U = copy_columns_by_order(V, n, k, sorted_eigenvectors_indices);
       free_matrix(V, n+1);
       free(sorted_eigenvectors_indices);
-      normalize_matrix(U, n, k); // T
-//    kmeans(data)
+      normalize_matrix(U, n, k); // U --> T
+      double **centroids = kmeans(k, pointsNumber, U);
+      print_matrix(centroids, k, k);
     }
 
 
