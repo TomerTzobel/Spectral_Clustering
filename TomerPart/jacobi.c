@@ -128,7 +128,7 @@ double **jacobi_eigenvectors(double **A, int n) {
     int is_converged = 0;
     while (!is_converged && ITERATIONS){
         update_Pivot(pivot, A, n);
-        i = pivot[0];
+        i = pivot[0]; // ##################################### check ayelets question #################################################################
         j = pivot[1];
         update_rotation_matrix(A, n, i, j, P); // step a
         c = P[i][i], s = P[i][j];
