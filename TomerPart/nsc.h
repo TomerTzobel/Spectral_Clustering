@@ -4,5 +4,5 @@
 
 #ifndef TOMERPART_NSC_H
 #define TOMERPART_NSC_H
-void nsc(int k, char *goal, char *filename, int kmeans_pp );
+void nsc(int k, char *goal, char *filename);
 #endif //TOMERPART_NSC_H

@@ -14,7 +14,7 @@
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define ERR_MSG "An Error Has Occured"
 
-void nsc(int k, char *goal, char *filename, int kmeans_pp) {
+void nsc(int k, char *goal, char *filename) {
     double **points;
     int dimension = 1, pointsNumber = 1;
     int maxlinelen = 0, currlinelen = 0;
