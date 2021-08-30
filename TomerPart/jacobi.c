@@ -143,14 +143,10 @@ double **jacobi_eigenvectors(double **A, int n) {
         ITERATIONS -= 1;
     }
     free_matrix(P, n);
-    double **output = init_matrix(n+1, n); // hack to include eigenvalues in matrix last row
-    for (int i = 0; i < n; i++) { //ugly way
-        for (int j = 0; j < n; j++) {
-            output[i+1][j] = V[i][j];
-        }
-    }
+    double **output = init_matrix(n+1, n);
+    copy_matrix(V, output+1, n, n);
     free_matrix(V, n);
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) { // first line with eigenvalues
         output[0][i] = ATag[i][i];
     }
     return output;

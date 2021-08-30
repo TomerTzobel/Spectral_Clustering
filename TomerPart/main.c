@@ -112,6 +112,7 @@ int main(int argc, char **argv) {
     }
 
     if (strcmp(goal,"jacobi") == 0){
+        points = lnorm(points, pointsNumber, dimension); // remove later $$$
         double **eigenvectors = jacobi_eigenvectors(points,pointsNumber);
         print_matrix(eigenvectors,pointsNumber+1,pointsNumber);
         free_matrix(eigenvectors,pointsNumber+1);
