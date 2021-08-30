@@ -113,24 +113,24 @@ int main(int argc, char **argv) {
 
     if (strcmp(goal,"jacobi") == 0){
         double **eigenvectors = jacobi_eigenvectors(points,pointsNumber);
-        print_matrix(eigenvectors,pointsNumber,pointsNumber);
+        print_matrix(eigenvectors,pointsNumber+1,pointsNumber);
         free_matrix(eigenvectors,pointsNumber+1);
     }
 
-    if (strcmp(goal,"spk") == 0){
+      if (strcmp(goal,"spk") == 0){
       int n = pointsNumber;
       double **lnorm_matrix = lnorm(points, n, dimension); 
-      double **V = jacobi_eigenvectors(lnorm_matrix, pointsNumber);
-      double *eigenvalues = V[pointsNumber];
+      double **V = jacobi_eigenvectors(lnorm_matrix, n);
+      double *eigenvalues = V[0];
       int *sorted_eigenvectors_indices = bubbleSort_index_tracked(eigenvalues, n);
-      if (k == 0){
-          k = get_elbow_k(eigenvalues, pointsNumber);
+      if (k == 0){ //we still need to test this
+          k = get_elbow_k(eigenvalues, n);
       }
       double **U = copy_columns_by_order(V, n, k, sorted_eigenvectors_indices);
       free_matrix(V, n+1);
       free(sorted_eigenvectors_indices);
       normalize_matrix(U, n, k); // U --> T
-      double **centroids = kmeans(k, pointsNumber, U);
+      double **centroids = kmeans(k, n, U); //does centroeids function free U matrix?
       print_matrix(centroids, k, k);
     }
 

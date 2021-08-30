@@ -29,29 +29,32 @@ void copy_matrix(double **source, double **dest, int rows, int cols) {
 
 double **copy_columns_by_order(double **source, int rows, int cols, int* order){
     double **cpy = init_matrix(rows, cols);
-    int curr_row;
+    int curr_col;
     int j,i;
     for (j = 0; j < cols; j++) {
-        curr_row = order[j];
+        curr_col = order[j];
         for (i = 0; i < rows; i++) {
-            cpy[i][j] = source[curr_row][i];
+            cpy[i][j] = source[i+1][curr_col]; //source has n+1 rows (eigenvaleus on the top)
         }
     }
     return cpy;
 }
 
 void normalize_matrix(double **matrix, int rows, int cols){
+    //double **output = init_matrix(rows,cols);
     double sum_squared, denominator;
-    for (int i = 0; i < rows; i++) {
+    int i,j;
+    for (i = 0; i < rows; i++) {
         sum_squared = 0;
-        for (int j = 0; j < cols; j++) {
-            sum_squared += pow(matrix[i][j], 2);
+        for (j = 0; j < cols; j++) {
+            sum_squared += (double)pow(matrix[i][j], 2);
         }
-        denominator = sqrt(sum_squared);
-        for (int j = 0; j < cols; j++) {
+        denominator = (double)sqrt(sum_squared);
+        for (j = 0; j < cols; j++) {
             matrix[i][j] = matrix[i][j] / denominator;
         }
     }
+    //print_matrix(output,rows,cols);
 }
 
 double **transpose_matrix(double **matrix, int rows, int cols) {

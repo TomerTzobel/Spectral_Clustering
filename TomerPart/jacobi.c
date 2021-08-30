@@ -88,7 +88,6 @@ double doubleOff(double **A,int n){
     for (i = 0; i < n; i++)
             sum_Digonal_Pow += (double)pow(A[i][i],2);
     doubleOffA = frobenius_Norm_Pow(A,n) - sum_Digonal_Pow;
-    doubleOffA = (double)pow(doubleOffA,2);
     return doubleOffA;
 }
 
@@ -127,7 +126,7 @@ double **jacobi_eigenvectors(double **A, int n) {
     double c, s;
     int pivot[2];
     int is_converged = 0;
-    while (!is_converged && ITERATIONS) {
+    while (!is_converged && ITERATIONS){
         update_Pivot(pivot, A, n);
         i = pivot[0];
         j = pivot[1];
@@ -145,10 +144,14 @@ double **jacobi_eigenvectors(double **A, int n) {
     }
     free_matrix(P, n);
     double **output = init_matrix(n+1, n); // hack to include eigenvalues in matrix last row
-    copy_matrix(V, output, n, n);
+    for (int i = 0; i < n; i++) { //ugly way
+        for (int j = 0; j < n; j++) {
+            output[i+1][j] = V[i][j];
+        }
+    }
     free_matrix(V, n);
     for (i = 0; i < n; i++) {
-        output[n][i] = ATag[i][i];
+        output[0][i] = ATag[i][i];
     }
     return output;
 }
