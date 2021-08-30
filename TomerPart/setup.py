@@ -2,7 +2,7 @@ from setuptools import setup, find_packages, Extension
 
 # setup() parameters - https://packaging.python.org/guides/distributing-packages-using-setuptools/
 setup(
-    name='mynsc',
+    name='nsc_wrapper',
     version='0.1.0',
     author="name",
     description="nsc",
@@ -13,7 +13,7 @@ setup(
 
     ext_modules=[
         Extension(
-            'mynsc',
+            'nsc_wrapper',
             ['nsc.c'],
         ),
     ]

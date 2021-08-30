@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import math
 import sys
-import mykmeanssp
+import nsc_wrapper
 
 def kmeans_pp(points, k):
     np.random.seed(0)
@@ -38,7 +38,7 @@ goal = args_arr[1]
 filename = args_arr[2]
 
 if(goal != "spk"):
-    mynsc.fit(k, goal, filename)
+    nsc_wrapper.fit(k, goal, filename)
 
 try:
     data = open(file, "r")
