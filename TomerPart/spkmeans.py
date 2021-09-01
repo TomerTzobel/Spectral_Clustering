@@ -41,7 +41,7 @@ if(goal != "spk"):
     nsc_wrapper.fit(k, goal, filename)
 
 try:
-    data = open(file, "r")
+    data = open(filename, "r")
 except:
     raise Exception(ERR_MSG)
 table = pd.read_csv(data, header=None)
