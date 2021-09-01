@@ -3,4 +3,8 @@ project(TomerPart C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(TomerPart main.c utils.c ddg.c eigengap.c wam.c utils.h wam.h ddg.h jacobi.c jacobi.h eigengap.h kmeans.c kmeans.h lnorm.c lnorm.h nsc.c nsc.h nsc_wrapper.c)
+#link_directories(D:/Programs/mingw/mingw64/lib/)
+include_directories(C:/Users/adamk/AppData/Local/Programs/Python/Python38/libs/include)
+#link_libraries(C:/Users/adamk/AppData/Local/Programs/Python/Python38/libs/python38.lib)
+
+add_executable(TomerPart include spkmeans.c spkmeans.c spkmeans.h spkmeansmodule.c)

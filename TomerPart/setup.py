@@ -14,7 +14,7 @@ setup(
     ext_modules=[
         Extension(
             'nsc_wrapper',
-            ['nsc.c'],
+            ['spkmeans.c'],
         ),
     ]
 )
