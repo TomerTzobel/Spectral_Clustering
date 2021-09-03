@@ -31,24 +31,36 @@ void update_Pivot(int *pivot, double **A, int n);
 
 double frobenius_Norm_Pow(double **A, int n);
 
-double doubleOff(double **A, int n);
-
-int converged(double **A, double **ATag, int n);
+int quick_converged(double  **A, int i, int j);
 
 double **transform_A(double **A, int n, int i, int j, double c, double s);
 
 double **jacobi_eigenvectors(double **A, int n);
 
+double **get_normalized_eigenvectors(int *k, double **points, int dimension, int n);
+
+void do_wam(double **points, int pointsNumber, int dimension);
+
+void do_ddg(double **points, int pointsNumber, int dimension);
+
+void do_lnorm(double **points, int pointsNumber, int dimension);
+
+void do_jacobi(double **points, int pointsNumber);
+
+void do_spk_kmeans(double **points, int pointsNumber, int dimension, int k);
+
 /* find ideal k given sorted eigenvalues*/
 int get_elbow_k(double *eigenvalues, int n);
 
 /* Kmeans algorithm functions */
-double **kmeans(int k, int n, double **points); /* do we need to end functions here?? */
+double **kmeans(int k, int n, double **points, long *centroids_indices);
 int findMinCent(double *point, double **centroids, int k, int dimension);
 
 int UpdateAllAvg(double **centroids, int *clusters, double **points, int k, int pointsnumber, int dimension);
 
 /* Helping methods */
+void read_data(const char *filename, double ***points, int *dimension, int *pointsNumber);
+
 double **init_matrix(int rows, int cols);
 
 void print_matrix(double **matrix, int rows, int cols);
@@ -70,8 +82,6 @@ void swap(double *xp, double *yp);
 double **get_I_matrix(int n);
 
 void copy_matrix(double **source, double **dest, int rows, int cols);
-
-double **transpose_matrix(double **matrix, int rows, int cols);
 
 void print_arr(double *arr, int n);
 

@@ -1,60 +1,15 @@
-#define PY_SSIZE_T_CLEAN
 #define ERR_MSG "An Error Has Occured"
 #define Epsilon 1.0e-15
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define FLT_MAX 3.402823e+38
-#define _USE_MATH_DEFINES
+#define M_E		2.7182818284590452354
 
-#include <Python.h>
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include "spkmeans.h"
-
-
-static void *fit(PyObject *self, PyObject *args);
-
-static PyMethodDef capiMethods[] = {
-        {"fit",
-         (PyCFunction)fit,
-         METH_VARARGS,
-         PyDoc_STR("runs Normalized Spectral Clustering")},
-         {NULL, NULL, 0, NULL}};
-
-static struct PyModuleDef moduledef = {
-        PyModuleDef_HEAD_INIT,
-        "nsc_wrapper",
-        NULL,
-        -1,
-        capiMethods};
-
-PyMODINIT_FUNC
-PyInit_nsc_wrapper(void)
-{
-    PyObject *m;
-    m = PyModule_Create(&moduledef);
-    if (!m)
-    {
-        return NULL;
-    }
-    return m;
-};
-
-
-static void *fit(PyObject *self, PyObject *args)
-{
-    int k;
-    char *goal, *filename;
-
-    if (!PyArg_ParseTuple(args, "iss", &k, &goal, &filename))
-        return NULL;
-
-    printf("in c");
-}
-
 
 /* The Weighted Adjacency Matrix Functions */
 double **wam(double **datapoints, int n, int dimension) {
@@ -127,9 +82,6 @@ double **lnorm(double **datapoints, int n, int dimension) {
 /*
  * Jacobi algorithm Functions
  */
-double get_c(double **A, int i, int j); /*do we need this here?*/
-double get_s(double **A, int i, int j); /*do we need this here?*/
-
 
 /* STEP 2: n is dim, i,j are A_ij of Pivot step, I is identity matrix */
 void update_rotation_matrix(double **A, int i, int j, double **I) {
@@ -199,20 +151,9 @@ double frobenius_Norm_Pow(double **A, int n) {
     return norm;
 }
 
-double doubleOff(double **A, int n) {
-    double doubleOffA = 0;
-    double sum_Digonal_Pow = 0;
-    int i;
-    for (i = 0; i < n; i++)
-        sum_Digonal_Pow += (double) pow(A[i][i], 2);
-    doubleOffA = frobenius_Norm_Pow(A, n) - sum_Digonal_Pow;
-    return doubleOffA;
-}
-
-int converged(double **A, double **ATag, int n) {
-    if (doubleOff(A, n) - doubleOff(ATag, n) <= Epsilon)
-        return 1;
-    return 0;
+/* returns true iff converged */
+int quick_converged(double  **A, int i, int j){
+    return (2*pow(A[i][j],2) <= Epsilon);
 }
 
 /* transform A -> A' */
@@ -238,7 +179,6 @@ double **transform_A(double **A, int n, int i, int j, double c, double s) {
 /*
  * STEP 1 - full jacobi
  * Finding Eigenvalues and Eigenvectors
- * check if P_n needs to be calculated https://moodle.tau.ac.il/mod/forum/discuss.php?d=162730
  */
 double **jacobi_eigenvectors(double **A, int n) {
     int i, j, ITERATIONS = 100;
@@ -253,7 +193,7 @@ double **jacobi_eigenvectors(double **A, int n) {
         update_rotation_matrix(A, i, j, P); /* step a */
         c = P[i][i], s = P[i][j];
         ATag = transform_A(A, n, i, j, c, s); /* step b */
-        is_converged = converged(A, ATag, n);
+        is_converged = quick_converged(A, i, j);
         free_matrix(A, n);
         A = ATag;
         tmp_multiply = V; /* step e */
@@ -275,7 +215,7 @@ double **jacobi_eigenvectors(double **A, int n) {
 
 /* find ideal k given sorted eigenvalues*/
 int get_elbow_k(double *eigenvalues, int n) {
-    int i, k;
+    int i, k=0;
     double max = -1;
     double *gaps = calloc(n / 2 + 1, sizeof(double)); /* extra element for easy indexing */
     for (i = 1; i < n / 2 + 1; i++) {
@@ -286,117 +226,7 @@ int get_elbow_k(double *eigenvalues, int n) {
         }
     }
     free(gaps);
-    return k;
-}
-/********************/
-
-/* Kmeans algorithm functions
- * Based on H.W.1
- */
-int findMinCent(double *point, double **centroids, int k, int dimension) {
-    double min_val = FLT_MAX;
-    int min_idx;
-    double curr_val;
-    int i, j;
-    double num;
-    for (i = 0; i < k; i++) {
-        curr_val = 0.0;
-        for (j = 0; j < dimension; j++) {
-            num = point[j] - centroids[i][j];
-            curr_val = curr_val + (num * num);
-        }
-        if (curr_val < min_val) {
-            min_val = curr_val;
-            min_idx = i;
-        }
-    }
-    return min_idx;
-}
-
-int UpdateAllAvg(double **centroids, int *clusters, double **points, int k, int pointsnumber, int dimension) {
-    int i, j, changed = 0;
-    int curr;
-    double **OriginCenter;
-    int *CountCluster;
-
-    OriginCenter = (double **) malloc(k * sizeof(double *));
-    assert(OriginCenter != NULL && "malloc failed");
-    for (i = 0; i < k; i++) {
-        OriginCenter[i] = (double *) malloc(dimension * sizeof(double));
-        assert(OriginCenter[i] != NULL);
-        for (j = 0; j < dimension; j++)
-            OriginCenter[i][j] = centroids[i][j];
-    }
-
-    assert(NULL != (CountCluster = calloc(k, sizeof(int))) && "calloc failed");
-    /*RESET CENTROIDS*/
-    for (i = 0; i < k; i++) {
-        for (j = 0; j < dimension; j++) {
-            centroids[i][j] = 0.0;
-        }
-    }
-
-    /*SUM ALL CORDINATES FOR EACH CLUSTERS VECTOR*/
-    for (i = 0; i < pointsnumber; i++) {
-        curr = clusters[i];
-        CountCluster[curr]++;
-        for (j = 0; j < dimension; j++) {
-            centroids[curr][j] = centroids[curr][j] + points[i][j];
-        }
-    }
-
-    /*CALCULATE AVG AND CHECK IF ANY CENTROID IS CHANGED*/
-    for (i = 0; i < k; i++) {
-        for (j = 0; j < dimension; j++) {
-            centroids[i][j] = (double) centroids[i][j] / (CountCluster[i]);
-            if (centroids[i][j] != OriginCenter[i][j]) {
-                changed = 1;
-            }
-        }
-    }
-
-    for (i = 0; i < k; i++)
-        free(OriginCenter[i]);
-    free(OriginCenter);
-    free(CountCluster);
-    return changed;
-}
-
-double **kmeans(int k, int n, double **points) {
-    int *clusters;
-    int max_iter = 300, dimension = k, pointsNumber = n, changed = 1;
-    int i, j, ClusterNumber;
-
-
-    double **centroids = init_matrix(k, k);
-    for (i = 0; i < k; i++) {
-        for (j = 0; j < k; j++) {
-            centroids[i][j] = points[i][j];
-        }
-    }
-
-    /*INIT CLUSTERS*/
-    assert(NULL != (clusters = calloc(pointsNumber, sizeof(int))) && "calloc failed");
-    for (i = 0; i < pointsNumber; i++) {
-        if (i < k)
-            clusters[i] = i;
-        else
-            clusters[i] = -1;
-    }
-
-    while (max_iter > 0 && changed) {
-        changed = 0;
-        max_iter--;
-        for (i = 0; i < pointsNumber; i++) {
-            ClusterNumber = findMinCent(points[i], centroids, k, dimension);
-            clusters[i] = ClusterNumber;
-        }
-        changed = UpdateAllAvg(centroids, clusters, points, k, pointsNumber, dimension);
-    }
-
-    free(clusters);
-
-    return centroids;
+    return k+1;
 }
 /********************/
 
@@ -454,16 +284,6 @@ void normalize_matrix(double **matrix, int rows, int cols) {
     }
 }
 
-double **transpose_matrix(double **matrix, int rows, int cols) {
-    int i, j;
-    double **transpose = init_matrix(cols, rows);
-    for (i = 0; i < rows; ++i)
-        for (j = 0; j < cols; ++j) {
-            transpose[j][i] = matrix[i][j];
-        }
-    return transpose;
-}
-
 void print_matrix(double **matrix, int rows, int cols) {
     int i, j;
     for (i = 0; i < rows; i++) {
@@ -479,17 +299,6 @@ void print_matrix(double **matrix, int rows, int cols) {
         if (i != rows - 1)
             printf("\n");
     }
-}
-
-void print_arr(double *arr, int n) {
-    int i;
-    for (i = 0; i < n; i++) {
-        if (i != n - 1)
-            printf("%.4f,", arr[i]);
-        else
-            printf("%.4f", arr[i]);
-    }
-    printf("\n");
 }
 
 void free_matrix(double **matrix, int rows) {
@@ -589,23 +398,19 @@ double **get_I_matrix(int n) {
 }
 /********************/
 
-/* Reads points from the file
- * Output results depending on the Goal from the user
-*/
-void nsc(int k, char *goal, char *filename) {
-    double **points;
-    int dimension = 1, pointsNumber = 1;
+/* reads and updates points, dimension, pointsNumber inplace */
+void read_data(const char *filename, double ***points, int *dimension, int *pointsNumber) {
     int maxlinelen = 0, currlinelen = 0;
     int i, j, ch;
     FILE *fp;
-    char *coordinate, *line;
+    char *coordinate = NULL, *line;
 
     fp = fopen(filename, "r");
     assert(fp != NULL && ERR_MSG);
     while ((ch = fgetc(fp)) != 10) /*check the dimension of the vectors*/
     {
         if (ch == ',')
-            dimension++;
+            (*dimension)++;
         if (ch == EOF)
             break;
     }
@@ -615,21 +420,21 @@ void nsc(int k, char *goal, char *filename) {
     {
         currlinelen++;
         if (ch == 10) {
-            pointsNumber++;
+            (*pointsNumber)++;
             maxlinelen = MAX(maxlinelen, currlinelen);
             currlinelen = 0;
         }
     }
 
     /*malloc points matrix and read points */
-    points = init_matrix(pointsNumber, dimension);
+    (*points) = init_matrix((*pointsNumber), (*dimension));
     fp = fopen(filename, "r");
     i = 0;
     line = malloc(maxlinelen * sizeof(char));
     while (fgets(line, maxlinelen + 1, fp) != NULL) {
         coordinate = strtok(line, ",");
-        for (j = 0; j < dimension; j++) {
-            points[i][j] = atof(coordinate);
+        for (j = 0; j < (*dimension); j++) {
+            (*points)[i][j] = atof(coordinate);
             coordinate = strtok(NULL, ",");
         }
         i++;
@@ -637,49 +442,90 @@ void nsc(int k, char *goal, char *filename) {
     fclose(fp);
     free(line);
     free(coordinate);
+}
+
+/* Normalized Spectral Clustering
+ * Read points from the file
+ * Output results depending on the goal
+*/
+void nsc(int k, char *goal, char *filename) {
+    double **points;
+    int dimension = 1, pointsNumber = 1;
+
+    read_data(filename, &points, &dimension, &pointsNumber);
 
     if (strcmp(goal, "wam") == 0) {
-        double **wamMatrix = wam(points, pointsNumber, dimension);
-        print_matrix(wamMatrix, pointsNumber, pointsNumber);
-        free_matrix(wamMatrix, pointsNumber);
+        do_wam(points, pointsNumber, dimension);
+    } else if (strcmp(goal, "ddg") == 0) {
+        do_ddg(points, pointsNumber, dimension);
+    } else if (strcmp(goal, "lnorm") == 0) {
+        do_lnorm(points, pointsNumber, dimension);
+    } else if (strcmp(goal, "jacobi") == 0) {
+        do_jacobi(points, pointsNumber);
+    } else {
+        do_spk_kmeans(points, pointsNumber, dimension, k);
     }
+}
 
-    if (strcmp(goal, "ddg") == 0) {
-        double **ddgMatrix = ddg(points, pointsNumber, dimension);
-        print_matrix(ddgMatrix, pointsNumber, pointsNumber);
-        free_matrix(ddgMatrix, pointsNumber);
+/* returns arr of size k : [0, 1, 2 , ... , k-1] */
+long *get_indices_arr(int k) {
+    long *indices = malloc(k * sizeof(long));
+    long i;
+    assert(indices != NULL && ERR_MSG);
+    for (i = 0; i<k; i++){
+        indices[i] = i;
     }
+    return indices;
+}
 
-    if (strcmp(goal, "lnorm") == 0) {
-        double **lnormMatrix = lnorm(points, pointsNumber, dimension);
-        print_matrix(lnormMatrix, pointsNumber, pointsNumber);
-        free_matrix(lnormMatrix, pointsNumber);
-    }
+void do_spk_kmeans(double **points, int pointsNumber, int dimension, int k) {
+    double **T, **centroids;
+    long *indices;
+    T = get_normalized_eigenvectors(&k, points, dimension, pointsNumber);
+    indices = get_indices_arr(k);
+    centroids = kmeans(k, pointsNumber, T, indices );
+    print_matrix(centroids, k, k);
+    free_matrix(T, pointsNumber);
+    free_matrix(centroids, k);
+}
 
-    if (strcmp(goal, "jacobi") == 0) {
-        double **eigenvectors = jacobi_eigenvectors(points, pointsNumber);
-        print_matrix(eigenvectors, pointsNumber + 1, pointsNumber);
-        free_matrix(eigenvectors, pointsNumber + 1);
+double **get_normalized_eigenvectors(int *k, double **points, int dimension, int n) {
+    double **lnorm_matrix = lnorm(points, n, dimension);
+    double **V = jacobi_eigenvectors(lnorm_matrix, n);
+    double *eigenvalues = V[0], **U;
+    int *sorted_eigenvectors_indices = bubbleSort_index_tracked(eigenvalues, n);
+    if ((*k) == 0) { /* we still need to test this */
+        (*k) = get_elbow_k(eigenvalues, n);
     }
+    U = copy_columns_by_order(V, n, (*k), sorted_eigenvectors_indices);
+    free_matrix(V, n + 1);
+    free(sorted_eigenvectors_indices);
+    normalize_matrix(U, n, (*k)); /* U --> T */
+    return U;
+}
 
-    if (strcmp(goal, "spk") == 0) {
-        int n = pointsNumber;
-        double **lnorm_matrix = lnorm(points, n, dimension);
-        double **V = jacobi_eigenvectors(lnorm_matrix, n);
-        double *eigenvalues = V[0], **U, **centroids;
-        int *sorted_eigenvectors_indices = bubbleSort_index_tracked(eigenvalues, n);
-        if (k == 0) { /* we still need to test this */
-            k = get_elbow_k(eigenvalues, n);
-        }
-        U = copy_columns_by_order(V, n, k, sorted_eigenvectors_indices);
-        free_matrix(V, n + 1);
-        free(sorted_eigenvectors_indices);
-        normalize_matrix(U, n, k); /* U --> T */
-        centroids = kmeans(k, n, U);
-        print_matrix(centroids, k, k);
-        free_matrix(U, n);
-        free_matrix(centroids, k);
-    }
+void do_jacobi(double **points, int pointsNumber) {
+    double **eigenvectors = jacobi_eigenvectors(points, pointsNumber);
+    print_matrix(eigenvectors, pointsNumber + 1, pointsNumber);
+    free_matrix(eigenvectors, pointsNumber + 1);
+}
+
+void do_lnorm(double **points, int pointsNumber, int dimension) {
+    double **lnormMatrix = lnorm(points, pointsNumber, dimension);
+    print_matrix(lnormMatrix, pointsNumber, pointsNumber);
+    free_matrix(lnormMatrix, pointsNumber);
+}
+
+void do_ddg(double **points, int pointsNumber, int dimension) {
+    double **ddgMatrix = ddg(points, pointsNumber, dimension);
+    print_matrix(ddgMatrix, pointsNumber, pointsNumber);
+    free_matrix(ddgMatrix, pointsNumber);
+}
+
+void do_wam(double **points, int pointsNumber, int dimension) {
+    double **wamMatrix = wam(points, pointsNumber, dimension);
+    print_matrix(wamMatrix, pointsNumber, pointsNumber);
+    free_matrix(wamMatrix, pointsNumber);
 }
 /********************/
 
@@ -698,3 +544,125 @@ int main(int argc, char **argv) {
     return 0;
 }
 /********************/
+
+/*
+ * Kmeans algorithm functions H.W.1
+ */
+int findMinCent(double *point, double **centroids, int k, int dimension) {
+    double min_val = FLT_MAX;
+    int min_idx = 0;
+    double curr_val;
+    int i, j;
+    double num;
+    for (i = 0; i < k; i++) {
+        curr_val = 0.0;
+        for (j = 0; j < dimension; j++) {
+            num = point[j] - centroids[i][j];
+            curr_val = curr_val + (num * num);
+        }
+        if (curr_val < min_val) {
+            min_val = curr_val;
+            min_idx = i;
+        }
+    }
+    return min_idx;
+}
+
+int UpdateAllAvg(double **centroids, int *clusters, double **points, int k, int pointsnumber, int dimension) {
+    int i, j, changed = 0;
+    int curr;
+    double **OriginCenter;
+    int *CountCluster;
+
+    OriginCenter = (double **) malloc(k * sizeof(double *));
+    assert(OriginCenter != NULL && ERR_MSG);
+    for (i = 0; i < k; i++) {
+        OriginCenter[i] = (double *) malloc(dimension * sizeof(double));
+        assert(OriginCenter[i] != NULL);
+        for (j = 0; j < dimension; j++)
+            OriginCenter[i][j] = centroids[i][j];
+    }
+    CountCluster = calloc(k, sizeof(int));
+    assert(CountCluster != NULL && ERR_MSG);
+    /*RESET CENTROIDS*/
+    for (i = 0; i < k; i++) {
+        for (j = 0; j < dimension; j++) {
+            centroids[i][j] = 0.0;
+        }
+    }
+
+    /*SUM ALL CORDINATES FOR EACH CLUSTERS VECTOR*/
+    for (i = 0; i < pointsnumber; i++) {
+        curr = clusters[i];
+        CountCluster[curr]++;
+        for (j = 0; j < dimension; j++) {
+            centroids[curr][j] = centroids[curr][j] + points[i][j];
+        }
+    }
+
+    /*CALCULATE AVG AND CHECK IF ANY CENTROID IS CHANGED*/
+    for (i = 0; i < k; i++) {
+        for (j = 0; j < dimension; j++) {
+            centroids[i][j] = (double) centroids[i][j] / (CountCluster[i]);
+            if (centroids[i][j] != OriginCenter[i][j]) {
+                changed = 1;
+            }
+        }
+    }
+
+    for (i = 0; i < k; i++)
+        free(OriginCenter[i]);
+    free(OriginCenter);
+    free(CountCluster);
+    return changed;
+}
+
+double **kmeans(int k, int n, double **points, long* centroids_indices) {
+    int *clusters;
+    int max_iter = 300, dimension = k, pointsNumber = n, changed = 1;
+    int i, j, ClusterNumber, counter, index;
+    double **centroids;
+
+    /* INIT CLUSTERS */
+    clusters = calloc(pointsNumber, sizeof(int));
+    assert(clusters != NULL && ERR_MSG);
+    for (i = 0; i < pointsNumber; i++)
+    {
+        clusters[i] = -1;
+    }
+    counter = 0;
+    for (i = 0; i < k; i++)
+    {
+        index = centroids_indices[i];
+        clusters[index] = counter;
+        counter++;
+    }
+    /* INIT CENTROIDS */
+    centroids = init_matrix(k, k);
+    for (i = 0; i < k; i++) {
+        index = centroids_indices[i];
+        for (j = 0; j < k; j++) {
+            centroids[i][j] = points[index][j];
+        }
+    }
+    /* PROCESS */
+    while (max_iter > 0 && changed) {
+        changed = 0;
+        max_iter--;
+        for (i = 0; i < pointsNumber; i++) {
+            ClusterNumber = findMinCent(points[i], centroids, k, dimension);
+            clusters[i] = ClusterNumber;
+        }
+        changed = UpdateAllAvg(centroids, clusters, points, k, pointsNumber, dimension);
+    }
+
+    free(clusters);
+    free(centroids_indices);
+    return centroids;
+}
+
+/********************/
+
+
+
+

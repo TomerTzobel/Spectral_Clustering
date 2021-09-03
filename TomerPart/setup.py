@@ -2,10 +2,10 @@ from setuptools import setup, find_packages, Extension
 
 # setup() parameters - https://packaging.python.org/guides/distributing-packages-using-setuptools/
 setup(
-    name='nsc_wrapper',
+    name='spkmeansmodule',
     version='0.1.0',
     author="name",
-    description="nsc",
+    description="spkmeansmodule",
     install_requires=['invoke'],
     packages=find_packages(),
 
@@ -13,8 +13,8 @@ setup(
 
     ext_modules=[
         Extension(
-            'nsc_wrapper',
-            ['spkmeans.c'],
+            'spkmeansmodule',
+            ['spkmeansmodule.c', 'spkmeans.c'],
         ),
     ]
 )

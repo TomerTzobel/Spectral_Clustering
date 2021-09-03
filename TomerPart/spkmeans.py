@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 import math
 import sys
-import nsc_wrapper
+import spkmeansmodule as spkm
 
-def kmeans_pp(points, k):
+def get_init_centroids(points, k):
     np.random.seed(0)
     u1 = np.random.choice(len(points))
     z = 1
@@ -32,44 +32,18 @@ def eval_distance(a, b):
 ERR_MSG = "An Error Has Occured"
 #main
 args_arr = sys.argv[1:]
-max_iter = 300
 k = int(args_arr[0])
 goal = args_arr[1]
 filename = args_arr[2]
 
 if(goal != "spk"):
-    nsc_wrapper.fit(k, goal, filename)
+    spkm.fit(goal, filename)
 
-try:
-    data = open(filename, "r")
-except:
-    raise Exception(ERR_MSG)
-table = pd.read_csv(data, header=None)
-data.close()
-pointsMatrix = table.to_numpy()
-#more validations:
-pointsNumber, dimension = pointsMatrix.shape
-if not (0 < k < pointsNumber):
-    raise Exception(ERR_MSG)
-if (pointsNumber == 0):
-    raise Exception(ERR_MSG)
-# kmeans plus plus:
-initCent = kmeans_pp(pointsMatrix, k)
-joined_string = ",".join([str(element) for element in initCent.tolist()])
-print(joined_string)
-
-listPoints = pointsMatrix.flatten().tolist()
-listCent = []
-for cent in initCent:
-    listCent.extend(pointsMatrix[cent].tolist())
-centroidsFinal = mykmeanssp.fit(
-    listPoints, listCent, initCent.tolist(), dimension, pointsNumber, k, max_iter)
-# print result:
-joined_string = ",".join([str(element) for element in initCent.tolist()])
-print(joined_string)
-for i in range(len(centroidsFinal)):
-    for j in range(dimension):
-        print((np.round_(centroidsFinal[i][j], decimals=4)), end="")
-        if j < dimension - 1:
-            print(',', end="")
-    print("")
+if(goal == "spk"):
+    pointsMatrix = np.array(spkm.get_normalized_matrix_wrapper(k, filename))
+    pointsNumber, dimension = pointsMatrix.shape
+    k = dimension # in case k was 0
+    init_centroids = get_init_centroids(pointsMatrix, k)
+    listPoints = pointsMatrix.flatten().tolist()
+    spkm.kmeans_pp(
+        listPoints, init_centroids.tolist(), dimension, pointsNumber, k)
