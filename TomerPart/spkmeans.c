@@ -2,7 +2,7 @@
 #define Epsilon 1.0e-15
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define FLT_MAX 3.402823e+38
-#define M_E		2.7182818284590452354
+#define M_E	2.7182818284590452354
 
 #include <math.h>
 #include <stdio.h>
@@ -403,7 +403,7 @@ void read_data(const char *filename, double ***points, int *dimension, int *poin
     int maxlinelen = 0, currlinelen = 0;
     int i, j, ch;
     FILE *fp;
-    char *coordinate = NULL, *line;
+    char *coordinate=NULL, *line;
 
     fp = fopen(filename, "r");
     assert(fp != NULL && ERR_MSG);
@@ -414,7 +414,7 @@ void read_data(const char *filename, double ***points, int *dimension, int *poin
         if (ch == EOF)
             break;
     }
-
+    fclose(fp);
     fp = fopen(filename, "r");
     while ((ch = fgetc(fp)) != EOF) /*check the number of the vectors*/
     {
@@ -425,7 +425,7 @@ void read_data(const char *filename, double ***points, int *dimension, int *poin
             currlinelen = 0;
         }
     }
-
+    fclose(fp);
     /*malloc points matrix and read points */
     (*points) = init_matrix((*pointsNumber), (*dimension));
     fp = fopen(filename, "r");
@@ -536,11 +536,11 @@ void do_wam(double **points, int pointsNumber, int dimension) {
 int main(int argc, char **argv) {
     int k;
     char *filename, *goal;
-    assert(argc == 4 && ERR_MSG); /*do we need this?*/
     k = atoi(argv[1]);
     goal = argv[2];
     filename = argv[3];
     nsc(k, goal, filename); /*Output results depending on the goal */
+    (void)argc;
     return 0;
 }
 /********************/

@@ -7,8 +7,8 @@
 #include <string.h>
 #include "spkmeans.h"
 
-static void fit(PyObject *self, PyObject *args);
-static void kmeans_pp(PyObject *self, PyObject *args);
+static PyObject *fit(PyObject *self, PyObject *args);
+static PyObject *kmeans_pp(PyObject *self, PyObject *args);
 static PyObject *get_normalized_matrix_wrapper(PyObject *self, PyObject *args);
 static double **pythonListToArrays(PyObject *pythonList, int pointsNumber, int dimension);
 
@@ -37,7 +37,7 @@ PyInit_spkmeansmodule(void)
     return m;
 };
 
-static void kmeans_pp(PyObject *self, PyObject *args){
+static PyObject *kmeans_pp(PyObject *self, PyObject *args){
     PyObject *pythonPoints , *python_centroids_indices, *item;
     int pointsNumber, dimension;
     double **points, **centroids;
@@ -61,14 +61,16 @@ static void kmeans_pp(PyObject *self, PyObject *args){
 
     print_matrix(centroids, k, k);
     free_matrix(centroids, k);
+    Py_RETURN_NONE;
 }
 
-static void fit(PyObject *self, PyObject *args)
+static PyObject *fit(PyObject *self, PyObject *args)
 {
     char *goal, *filename;
     if (!PyArg_ParseTuple(args, "ss", &goal, &filename))
         assert(0 && ERR_MSG);
-    nsc(0, goal, filename); /* dummy value */
+    nsc(0, goal, filename); /* 0 dummy value */
+    Py_RETURN_NONE;
 }
 
 static PyObject *get_normalized_matrix_wrapper(PyObject *self, PyObject *args) {
