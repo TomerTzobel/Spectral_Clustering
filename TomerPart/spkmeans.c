@@ -209,6 +209,7 @@ double **jacobi_eigenvectors(double **A, int n) {
     for (i = 0; i < n; i++) { /* first line with eigenvalues */
         output[0][i] = ATag[i][i];
     }
+    free_matrix(ATag, n); /* maybe not work with jacobi */
     return output;
 }
 /********************/
@@ -403,7 +404,7 @@ void read_data(const char *filename, double ***points, int *dimension, int *poin
     int maxlinelen = 0, currlinelen = 0;
     int i, j, ch;
     FILE *fp;
-    char *coordinate=NULL, *line;
+    char *coordinate = NULL, *line;
 
     fp = fopen(filename, "r");
     assert(fp != NULL && ERR_MSG);
@@ -439,7 +440,6 @@ void read_data(const char *filename, double ***points, int *dimension, int *poin
         }
         i++;
     }
-    fclose(fp);
     free(line);
     free(coordinate);
 }
@@ -494,7 +494,7 @@ double **get_normalized_eigenvectors(int *k, double **points, int dimension, int
     double **V = jacobi_eigenvectors(lnorm_matrix, n);
     double *eigenvalues = V[0], **U;
     int *sorted_eigenvectors_indices = bubbleSort_index_tracked(eigenvalues, n);
-    if ((*k) == 0) { /* we still need to test this */
+    if ((*k) == 0) {
         (*k) = get_elbow_k(eigenvalues, n);
     }
     U = copy_columns_by_order(V, n, (*k), sorted_eigenvectors_indices);

@@ -44,6 +44,9 @@ if(goal == "spk"):
     pointsNumber, dimension = pointsMatrix.shape
     k = dimension # in case k was 0
     init_centroids = get_init_centroids(pointsMatrix, k)
+    centroids_list = init_centroids.tolist()
+    centroids_values = ','.join(str(v) for v in centroids_list)
+    print(centroids_values)
     listPoints = pointsMatrix.flatten().tolist()
     spkm.kmeans_pp(
         listPoints, init_centroids.tolist(), dimension, pointsNumber, k)
