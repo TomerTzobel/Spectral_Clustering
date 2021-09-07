@@ -397,6 +397,16 @@ double **get_I_matrix(int n) {
     }
     return I;
 }
+
+double **transpose_matrix(double **matrix, int rows, int cols) {
+    int i, j;
+    double **transpose = init_matrix(cols, rows);
+    for (i = 0; i < rows; ++i)
+        for (j = 0; j < cols; ++j) {
+            transpose[j][i] = matrix[i][j];
+        }
+    return transpose;
+}
 /********************/
 
 /* reads and updates points, dimension, pointsNumber inplace */
@@ -505,7 +515,11 @@ double **get_normalized_eigenvectors(int *k, double **points, int dimension, int
 
 void do_jacobi(double **points, int pointsNumber) {
     double **eigenvectors = jacobi_eigenvectors(points, pointsNumber);
-    print_matrix(eigenvectors, pointsNumber + 1, pointsNumber);
+    double **transposed_output = transpose_matrix(eigenvectors+1 , pointsNumber,  pointsNumber);
+    print_matrix(eigenvectors, 1, pointsNumber);
+    printf("\n");
+    print_matrix(transposed_output, pointsNumber, pointsNumber);
+    free_matrix(transposed_output, pointsNumber);
     free_matrix(eigenvectors, pointsNumber + 1);
 }
 

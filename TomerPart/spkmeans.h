@@ -89,6 +89,8 @@ double **copy_columns_by_order(double **source, int rows, int cols, int *order);
 
 void normalize_matrix(double **matrix, int rows, int cols);
 
+double **transpose_matrix(double **matrix, int rows, int cols);
+
 /* Output results depending on the Goal from the user */
 void nsc(int k, char *goal, char *filename);
 
