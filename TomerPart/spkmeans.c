@@ -415,8 +415,7 @@ void read_data(const char *filename, double ***points, int *dimension, int *poin
         if (ch == EOF)
             break;
     }
-    fclose(fp);
-    fp = fopen(filename, "r");
+    rewind(fp);
     while ((ch = fgetc(fp)) != EOF) /*check the number of the vectors*/
     {
         currlinelen++;
@@ -426,10 +425,9 @@ void read_data(const char *filename, double ***points, int *dimension, int *poin
             currlinelen = 0;
         }
     }
-    fclose(fp);
+    rewind(fp);
     /*malloc points matrix and read points */
     (*points) = init_matrix((*pointsNumber), (*dimension));
-    fp = fopen(filename, "r");
     i = 0;
     line = malloc(maxlinelen * sizeof(char));
     while (fgets(line, maxlinelen + 1, fp) != NULL) {
@@ -442,6 +440,7 @@ void read_data(const char *filename, double ***points, int *dimension, int *poin
     }
     free(line);
     free(coordinate);
+    fclose(fp);
 }
 
 /* Normalized Spectral Clustering
