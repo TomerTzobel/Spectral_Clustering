@@ -429,7 +429,7 @@ void read_data(const char *filename, double ***points, int *dimension, int *poin
     /*malloc points matrix and read points */
     (*points) = init_matrix((*pointsNumber), (*dimension));
     i = 0;
-    line = malloc(maxlinelen * sizeof(char));
+    line = malloc((maxlinelen+1) * sizeof(char));
     while (fgets(line, maxlinelen + 1, fp) != NULL) {
         coordinate = strtok(line, ",");
         for (j = 0; j < (*dimension); j++) {

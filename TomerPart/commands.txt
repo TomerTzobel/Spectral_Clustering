@@ -1,6 +1,7 @@
 python3 setup.py build_ext --inplace
 gcc -ansi -Wall -Wextra -Werror -pedantic-errors spkmeans.c -lm -o spkmeans
 ./spkmeans 0 spk input_15.txt
-python3 spkmeans.py 3 spk input_1.txt
+python3 spkmeans.py 3 wam input12.csv
 
 valgrind --leak-check=full --show-leak-kinds=all ./spkmeans 0 wam input3.csv
+gdb --args python signal_test.py
