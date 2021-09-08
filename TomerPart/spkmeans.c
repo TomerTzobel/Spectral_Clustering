@@ -217,16 +217,14 @@ double **jacobi_eigenvectors(double **A, int n) {
 /* find ideal k given sorted eigenvalues*/
 int get_elbow_k(double *eigenvalues, int n) {
     int i, k=0;
-    double max = -1;
-    double *gaps = calloc(n / 2 + 1, sizeof(double)); /* extra element for easy indexing */
-    for (i = 1; i < n / 2 + 1; i++) {
-        gaps[i] = fabs(eigenvalues[i] - eigenvalues[i + 1]);
-        if (gaps[i] > max) {
+    double max = -1, currVal;
+    for (i = 0; i < n / 2 ; i++) {
+        currVal = fabs(eigenvalues[i] - eigenvalues[i + 1]);
+        if (currVal > max) {
             k = i;
-            max = gaps[i];
+            max = currVal;
         }
     }
-    free(gaps);
     return k+1;
 }
 /********************/
