@@ -215,7 +215,7 @@ double **jacobi_eigenvectors(double **A, int n) {
 /********************/
 
 /* find ideal k given sorted eigenvalues*/
-int get_elbow_k(double *eigenvalues, int n) {
+int get_elbow_k(double *eigenvalues, int n){
     int i, k=0;
     double max = -1, currVal;
     for (i = 0; i < n / 2 ; i++) {
