@@ -151,10 +151,23 @@ double frobenius_Norm_Pow(double **A, int n) {
     return norm;
 }
 
-/* returns true iff converged */
-int quick_converged(double  **A, int i, int j){
-    return (2*pow(A[i][j],2) <= Epsilon);
+double doubleOff(double **A,int n){
+    double doubleOffA = 0;
+    double sum_Digonal_Pow = 0;
+    int i;
+    for (i = 0; i < n; i++)
+        sum_Digonal_Pow += (double)pow(A[i][i],2);
+    doubleOffA = frobenius_Norm_Pow(A,n) - sum_Digonal_Pow;
+    return doubleOffA;
 }
+
+/* returns true iff converged */
+int converged(double **A,double **ATag,int n) {
+    if (doubleOff(A,n) - doubleOff(ATag,n) <= Epsilon)
+        return 1;
+    return 0;
+}
+
 
 /* transform A -> A' */
 double **transform_A(double **A, int n, int i, int j, double c, double s) {
@@ -193,7 +206,7 @@ double **jacobi_eigenvectors(double **A, int n) {
         update_rotation_matrix(A, i, j, P); /* step a */
         c = P[i][i], s = P[i][j];
         ATag = transform_A(A, n, i, j, c, s); /* step b */
-        is_converged = quick_converged(A, i, j);
+        is_converged = converged(A, ATag, n);
         free_matrix(A, n);
         A = ATag;
         tmp_multiply = V; /* step e */
@@ -209,7 +222,7 @@ double **jacobi_eigenvectors(double **A, int n) {
     for (i = 0; i < n; i++) { /* first line with eigenvalues */
         output[0][i] = ATag[i][i];
     }
-    free_matrix(ATag, n); /* maybe not work with jacobi */
+    free_matrix(ATag, n);
     return output;
 }
 /********************/

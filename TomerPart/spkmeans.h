@@ -31,7 +31,9 @@ void update_Pivot(int *pivot, double **A, int n);
 
 double frobenius_Norm_Pow(double **A, int n);
 
-int quick_converged(double  **A, int i, int j);
+int converged(double **A,double **ATag,int n);
+
+double doubleOff(double **A,int n);
 
 double **transform_A(double **A, int n, int i, int j, double c, double s);
 
