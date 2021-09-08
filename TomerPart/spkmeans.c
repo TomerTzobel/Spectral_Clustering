@@ -2,7 +2,7 @@
 #define Epsilon 1.0e-15
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define FLT_MAX 3.402823e+38
-#define M_E	2.7182818284590452354
+#define M_E    2.7182818284590452354
 
 #include <math.h>
 #include <stdio.h>
@@ -151,19 +151,19 @@ double frobenius_Norm_Pow(double **A, int n) {
     return norm;
 }
 
-double doubleOff(double **A,int n){
+double doubleOff(double **A, int n) {
     double doubleOffA = 0;
     double sum_Digonal_Pow = 0;
     int i;
     for (i = 0; i < n; i++)
-        sum_Digonal_Pow += (double)pow(A[i][i],2);
-    doubleOffA = frobenius_Norm_Pow(A,n) - sum_Digonal_Pow;
+        sum_Digonal_Pow += (double) pow(A[i][i], 2);
+    doubleOffA = frobenius_Norm_Pow(A, n) - sum_Digonal_Pow;
     return doubleOffA;
 }
 
 /* returns true iff converged */
-int converged(double **A,double **ATag,int n) {
-    if (doubleOff(A,n) - doubleOff(ATag,n) <= Epsilon)
+int converged(double **A, double **ATag, int n) {
+    if (doubleOff(A, n) - doubleOff(ATag, n) <= Epsilon)
         return 1;
     return 0;
 }
@@ -228,17 +228,17 @@ double **jacobi_eigenvectors(double **A, int n) {
 /********************/
 
 /* find ideal k given sorted eigenvalues*/
-int get_elbow_k(double *eigenvalues, int n){
-    int i, k=0;
+int get_elbow_k(double *eigenvalues, int n) {
+    int i, k = 0;
     double max = -1, currVal;
-    for (i = 0; i < n / 2 ; i++) {
+    for (i = 0; i < n / 2; i++) {
         currVal = fabs(eigenvalues[i] - eigenvalues[i + 1]);
         if (currVal > max) {
             k = i;
             max = currVal;
         }
     }
-    return k+1;
+    return k + 1;
 }
 /********************/
 
@@ -275,7 +275,7 @@ double **copy_columns_by_order(double **source, int rows, int cols, int *order) 
     for (j = 0; j < cols; j++) {
         curr_col = order[j];
         for (i = 0; i < rows; i++) {
-            cpy[i][j] = source[i + 1][curr_col]; /*source has n+1 rows (eigenvaleus on the top) */
+            cpy[i][j] = source[i + 1][curr_col]; /*source has n+1 rows (eigenvalues on the top) */
         }
     }
     return cpy;
@@ -364,7 +364,7 @@ void swap_int(int *xp, int *yp) {
     *yp = temp;
 }
 
-/* code by GFG, with our minor optimization */
+/* code by GFG, with our minor optimization of tracking original indices */
 int *bubbleSort_index_tracked(double *arr, int n) {
     int i, j, swapped;
     int *indices = malloc(n * sizeof(int));
@@ -450,7 +450,7 @@ void read_data(const char *filename, double ***points, int *dimension, int *poin
     /*malloc points matrix and read points */
     (*points) = init_matrix((*pointsNumber), (*dimension));
     i = 0;
-    line = malloc((maxlinelen+1) * sizeof(char));
+    line = malloc((maxlinelen + 1) * sizeof(char));
     while (fgets(line, maxlinelen + 1, fp) != NULL) {
         coordinate = strtok(line, ",");
         for (j = 0; j < (*dimension); j++) {
@@ -492,7 +492,7 @@ long *get_indices_arr(int k) {
     long *indices = malloc(k * sizeof(long));
     long i;
     assert(indices != NULL && ERR_MSG);
-    for (i = 0; i<k; i++){
+    for (i = 0; i < k; i++) {
         indices[i] = i;
     }
     return indices;
@@ -503,7 +503,7 @@ void do_spk_kmeans(double **points, int pointsNumber, int dimension, int k) {
     long *indices;
     T = get_normalized_eigenvectors(&k, points, dimension, pointsNumber);
     indices = get_indices_arr(k);
-    centroids = kmeans(k, pointsNumber, T, indices );
+    centroids = kmeans(k, pointsNumber, T, indices);
     print_matrix(centroids, k, k);
     free_matrix(T, pointsNumber);
     free_matrix(centroids, k);
@@ -526,7 +526,7 @@ double **get_normalized_eigenvectors(int *k, double **points, int dimension, int
 
 void do_jacobi(double **points, int pointsNumber) {
     double **eigenvectors = jacobi_eigenvectors(points, pointsNumber);
-    double **transposed_output = transpose_matrix(eigenvectors+1 , pointsNumber,  pointsNumber);
+    double **transposed_output = transpose_matrix(eigenvectors + 1, pointsNumber, pointsNumber);
     print_matrix(eigenvectors, 1, pointsNumber);
     printf("\n");
     print_matrix(transposed_output, pointsNumber, pointsNumber);
@@ -564,7 +564,7 @@ int main(int argc, char **argv) {
     goal = argv[2];
     filename = argv[3];
     nsc(k, goal, filename); /*Output results depending on the goal */
-    (void)argc;
+    (void) argc;
     return 0;
 }
 /********************/
@@ -641,7 +641,7 @@ int UpdateAllAvg(double **centroids, int *clusters, double **points, int k, int 
     return changed;
 }
 
-double **kmeans(int k, int n, double **points, long* centroids_indices) {
+double **kmeans(int k, int n, double **points, long *centroids_indices) {
     int *clusters;
     int max_iter = 300, dimension = k, pointsNumber = n, changed = 1;
     int i, j, ClusterNumber, counter, index;
@@ -650,13 +650,11 @@ double **kmeans(int k, int n, double **points, long* centroids_indices) {
     /* INIT CLUSTERS */
     clusters = calloc(pointsNumber, sizeof(int));
     assert(clusters != NULL && ERR_MSG);
-    for (i = 0; i < pointsNumber; i++)
-    {
+    for (i = 0; i < pointsNumber; i++) {
         clusters[i] = -1;
     }
     counter = 0;
-    for (i = 0; i < k; i++)
-    {
+    for (i = 0; i < k; i++) {
         index = centroids_indices[i];
         clusters[index] = counter;
         counter++;

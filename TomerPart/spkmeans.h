@@ -1,23 +1,17 @@
 #ifndef SPKMEANS_H
 #define SPKMEANS_H
 
-/* The Weighted Adjacency Matrix Functions */
 double **wam(double **datapoints, int n, int dimension);
 
-/* The Diagonal Degree Matrix Functions */
 double **ddg(double **datapoints, int n, int dimension);
 
 double **eval_ddg(double **weighted_matrix, int n);
 
-/* The Normalized Graph Laplacian Functions */
 double **lnorm(double **datapoints, int n, int dimension);
 
-/* Jacobi algorithm Functions */
 double get_c(double **A, int i, int j);
 
 double get_s(double **A, int i, int j);
-
-double **get_rotation_matrix(double **A, int n, int i, int j);
 
 double get_theta(double **A, int i, int j);
 
@@ -31,9 +25,9 @@ void update_Pivot(int *pivot, double **A, int n);
 
 double frobenius_Norm_Pow(double **A, int n);
 
-int converged(double **A,double **ATag,int n);
+int converged(double **A, double **ATag, int n);
 
-double doubleOff(double **A,int n);
+double doubleOff(double **A, int n);
 
 double **transform_A(double **A, int n, int i, int j, double c, double s);
 
@@ -51,16 +45,14 @@ void do_jacobi(double **points, int pointsNumber);
 
 void do_spk_kmeans(double **points, int pointsNumber, int dimension, int k);
 
-/* find ideal k given sorted eigenvalues*/
 int get_elbow_k(double *eigenvalues, int n);
 
-/* Kmeans algorithm functions */
 double **kmeans(int k, int n, double **points, long *centroids_indices);
+
 int findMinCent(double *point, double **centroids, int k, int dimension);
 
 int UpdateAllAvg(double **centroids, int *clusters, double **points, int k, int pointsnumber, int dimension);
 
-/* Helping methods */
 void read_data(const char *filename, double ***points, int *dimension, int *pointsNumber);
 
 double **init_matrix(int rows, int cols);
@@ -85,15 +77,12 @@ double **get_I_matrix(int n);
 
 void copy_matrix(double **source, double **dest, int rows, int cols);
 
-void print_arr(double *arr, int n);
-
 double **copy_columns_by_order(double **source, int rows, int cols, int *order);
 
 void normalize_matrix(double **matrix, int rows, int cols);
 
 double **transpose_matrix(double **matrix, int rows, int cols);
 
-/* Output results depending on the Goal from the user */
 void nsc(int k, char *goal, char *filename);
 
 #endif
