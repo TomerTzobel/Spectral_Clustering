@@ -108,6 +108,7 @@ double get_t(double theta) {
     return ((double) sign(theta)) / (fabs(theta) + sqrt(pow(theta, 2) + 1));
 }
 
+
 double get_c_of_t(double t) {
     return ((double) 1) / (sqrt(pow(t, 2) + 1));
 }
@@ -127,6 +128,7 @@ double get_s(double **A, int i, int j) {
 }
 
 /* STEP 3 PIVOT */
+/* fina and update the largest absolute value */
 void update_Pivot(int *pivot, double **A, int n) {
     double MaxValue = -1; /* smaller than any abs val */
     int i, j;
@@ -140,6 +142,7 @@ void update_Pivot(int *pivot, double **A, int n) {
     }
 }
 
+/* fina the power of two of the frobenius_Norm */
 double frobenius_Norm_Pow(double **A, int n) {
     int i, j;
     double norm = 0;
@@ -151,6 +154,7 @@ double frobenius_Norm_Pow(double **A, int n) {
     return norm;
 }
 
+/* fina the power of two of off(A) */
 double doubleOff(double **A, int n) {
     double doubleOffA = 0;
     double sum_Digonal_Pow = 0;
@@ -259,6 +263,7 @@ double **init_matrix(int rows, int cols) {
     return matrix;
 }
 
+/* copy the given matirx */
 void copy_matrix(double **source, double **dest, int rows, int cols) {
     int i, j;
     for (i = 0; i < rows; i++) {
@@ -268,6 +273,7 @@ void copy_matrix(double **source, double **dest, int rows, int cols) {
     }
 }
 
+/* copy columns to compute k vectors in SPK */
 double **copy_columns_by_order(double **source, int rows, int cols, int *order) {
     double **cpy = init_matrix(rows, cols);
     int curr_col;
@@ -281,6 +287,7 @@ double **copy_columns_by_order(double **source, int rows, int cols, int *order) 
     return cpy;
 }
 
+/* normalize given matrix */
 void normalize_matrix(double **matrix, int rows, int cols) {
     double sum_squared, denominator;
     int i, j;
