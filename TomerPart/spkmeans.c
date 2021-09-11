@@ -1,4 +1,3 @@
-#define ERR_MSG "An Error Has Occured"
 #define Epsilon 1.0e-15
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define FLT_MAX 3.402823e+38
@@ -30,7 +29,7 @@ double **wam(double **datapoints, int n, int dimension) {
 }
 /********************/
 
-/* The Diagonal Degree Matrix Functions */
+/* evaluate ddg given weighted matrix */
 double **eval_ddg(double **weighted_matrix, int n) {
     int i, j;
     double sum;
@@ -45,6 +44,7 @@ double **eval_ddg(double **weighted_matrix, int n) {
     return diagonal_degree_matrix;
 }
 
+/* evaluate ddg */
 double **ddg(double **datapoints, int n, int dimension) {
     double **weighted_matrix = wam(datapoints, n, dimension);
     double **diag = eval_ddg(weighted_matrix, n);
@@ -54,7 +54,7 @@ double **ddg(double **datapoints, int n, int dimension) {
 /********************/
 
 
-/* The Normalized Graph Laplacian Functions */
+/* get Normalized Graph Laplacian */
 double **lnorm(double **datapoints, int n, int dimension) {
     double **wamMatrix = wam(datapoints, n, dimension);
     double **DDGMatrix = eval_ddg(wamMatrix, n);
@@ -89,6 +89,7 @@ void update_rotation_matrix(double **A, int i, int j, double **I) {
     I[i][i] = c, I[i][j] = s, I[j][i] = -s, I[j][j] = c;
 }
 
+/* transform P to identity matrix */
 void revert_P_to_Identity(double **P, int i, int j) {
     P[i][i] = 1, P[i][j] = 0, P[j][i] = 0, P[j][j] = 1;
 }
@@ -128,7 +129,7 @@ double get_s(double **A, int i, int j) {
 }
 
 /* STEP 3 PIVOT */
-/* fina and update the largest absolute value */
+/* find and update the largest absolute value */
 void update_Pivot(int *pivot, double **A, int n) {
     double MaxValue = -1; /* smaller than any abs val */
     int i, j;
@@ -142,7 +143,7 @@ void update_Pivot(int *pivot, double **A, int n) {
     }
 }
 
-/* fina the power of two of the frobenius_Norm */
+/* find the power of two of the frobenius_Norm */
 double frobenius_Norm_Pow(double **A, int n) {
     int i, j;
     double norm = 0;
@@ -154,7 +155,7 @@ double frobenius_Norm_Pow(double **A, int n) {
     return norm;
 }
 
-/* fina the power of two of off(A) */
+/* find the power of two of off(A) */
 double doubleOff(double **A, int n) {
     double doubleOffA = 0;
     double sum_Digonal_Pow = 0;
@@ -255,15 +256,15 @@ int get_elbow_k(double *eigenvalues, int n) {
 double **init_matrix(int rows, int cols) {
     int i;
     double **matrix = malloc(rows * sizeof(double *));
-    assert(matrix != NULL && ERR_MSG);
+    assert(matrix != NULL && "An Error Has Occured");
     for (i = 0; i < rows; i++) {
         matrix[i] = calloc(cols, sizeof(double));
-        assert(matrix[i] != NULL && ERR_MSG);
+        assert(matrix[i] != NULL && "An Error Has Occured");
     }
     return matrix;
 }
 
-/* copy the given matirx */
+/* copy the given matrix */
 void copy_matrix(double **source, double **dest, int rows, int cols) {
     int i, j;
     for (i = 0; i < rows; i++) {
@@ -303,6 +304,7 @@ void normalize_matrix(double **matrix, int rows, int cols) {
     }
 }
 
+/* print matrix with .4 format */
 void print_matrix(double **matrix, int rows, int cols) {
     int i, j;
     for (i = 0; i < rows; i++) {
@@ -320,6 +322,7 @@ void print_matrix(double **matrix, int rows, int cols) {
     }
 }
 
+/* free allocated memory of matrix */
 void free_matrix(double **matrix, int rows) {
     int i;
     for (i = 0; i < rows; i++)
@@ -327,6 +330,7 @@ void free_matrix(double **matrix, int rows) {
     free(matrix);
 }
 
+/* return multiplication of A*B */
 double **multiply_matrices(double **A, int rows_A, int cols_A, double **B, int rows_B, int cols_B) {
     double **res;
     int i, j, k;
@@ -342,6 +346,7 @@ double **multiply_matrices(double **A, int rows_A, int cols_A, double **B, int r
     return res;
 }
 
+/* return multiplication of A*B */
 double **multiply_matrices_same_dim(double **A, double **B, int n) {
     return multiply_matrices(A, n, n, B, n, n);
 }
@@ -375,7 +380,7 @@ void swap_int(int *xp, int *yp) {
 int *bubbleSort_index_tracked(double *arr, int n) {
     int i, j, swapped;
     int *indices = malloc(n * sizeof(int));
-    assert(indices != NULL && ERR_MSG);
+    assert(indices != NULL && "An Error Has Occured");
     for (i = 0; i < n; i++) {
         indices[i] = i;
     }
@@ -407,6 +412,7 @@ void power_matrix_elementwise(double **matrix, int n, double x) {
     }
 }
 
+/* get identity matrix */
 double **get_I_matrix(int n) {
     int i;
     double **I = init_matrix(n, n);
@@ -416,6 +422,7 @@ double **get_I_matrix(int n) {
     return I;
 }
 
+/* return transposed matrix */
 double **transpose_matrix(double **matrix, int rows, int cols) {
     int i, j;
     double **transpose = init_matrix(cols, rows);
@@ -435,7 +442,7 @@ void read_data(const char *filename, double ***points, int *dimension, int *poin
     char *coordinate = NULL, *line;
 
     fp = fopen(filename, "r");
-    assert(fp != NULL && ERR_MSG);
+    assert(fp != NULL && "An Error Has Occured");
     while ((ch = fgetc(fp)) != 10) /*check the dimension of the vectors*/
     {
         if (ch == ',')
@@ -498,13 +505,14 @@ void nsc(int k, char *goal, char *filename) {
 long *get_indices_arr(int k) {
     long *indices = malloc(k * sizeof(long));
     long i;
-    assert(indices != NULL && ERR_MSG);
+    assert(indices != NULL && "An Error Has Occured");
     for (i = 0; i < k; i++) {
         indices[i] = i;
     }
     return indices;
 }
 
+/* full spk */
 void do_spk_kmeans(double **points, int pointsNumber, int dimension, int k) {
     double **T, **centroids;
     long *indices;
@@ -516,6 +524,7 @@ void do_spk_kmeans(double **points, int pointsNumber, int dimension, int k) {
     free_matrix(centroids, k);
 }
 
+/* return normalized eigenvectors of matrix points and update k if needed */
 double **get_normalized_eigenvectors(int *k, double **points, int dimension, int n) {
     double **lnorm_matrix = lnorm(points, n, dimension);
     double **V = jacobi_eigenvectors(lnorm_matrix, n);
@@ -531,6 +540,7 @@ double **get_normalized_eigenvectors(int *k, double **points, int dimension, int
     return U;
 }
 
+/* full jacobi */
 void do_jacobi(double **points, int pointsNumber) {
     double **eigenvectors = jacobi_eigenvectors(points, pointsNumber);
     double **transposed_output = transpose_matrix(eigenvectors + 1, pointsNumber, pointsNumber);
@@ -541,25 +551,27 @@ void do_jacobi(double **points, int pointsNumber) {
     free_matrix(eigenvectors, pointsNumber + 1);
 }
 
+/* full lnorm */
 void do_lnorm(double **points, int pointsNumber, int dimension) {
     double **lnormMatrix = lnorm(points, pointsNumber, dimension);
     print_matrix(lnormMatrix, pointsNumber, pointsNumber);
     free_matrix(lnormMatrix, pointsNumber);
 }
 
+/* full ddg */
 void do_ddg(double **points, int pointsNumber, int dimension) {
     double **ddgMatrix = ddg(points, pointsNumber, dimension);
     print_matrix(ddgMatrix, pointsNumber, pointsNumber);
     free_matrix(ddgMatrix, pointsNumber);
 }
 
+/* full wam */
 void do_wam(double **points, int pointsNumber, int dimension) {
     double **wamMatrix = wam(points, pointsNumber, dimension);
     print_matrix(wamMatrix, pointsNumber, pointsNumber);
     free_matrix(wamMatrix, pointsNumber);
 }
 /********************/
-
 
 /*
  * Reading user CMD arguments
@@ -606,7 +618,7 @@ int UpdateAllAvg(double **centroids, int *clusters, double **points, int k, int 
     int *CountCluster;
 
     OriginCenter = (double **) malloc(k * sizeof(double *));
-    assert(OriginCenter != NULL && ERR_MSG);
+    assert(OriginCenter != NULL && "An Error Has Occured");
     for (i = 0; i < k; i++) {
         OriginCenter[i] = (double *) malloc(dimension * sizeof(double));
         assert(OriginCenter[i] != NULL);
@@ -614,7 +626,7 @@ int UpdateAllAvg(double **centroids, int *clusters, double **points, int k, int 
             OriginCenter[i][j] = centroids[i][j];
     }
     CountCluster = calloc(k, sizeof(int));
-    assert(CountCluster != NULL && ERR_MSG);
+    assert(CountCluster != NULL && "An Error Has Occured");
     /*RESET CENTROIDS*/
     for (i = 0; i < k; i++) {
         for (j = 0; j < dimension; j++) {
@@ -622,7 +634,7 @@ int UpdateAllAvg(double **centroids, int *clusters, double **points, int k, int 
         }
     }
 
-    /*SUM ALL CORDINATES FOR EACH CLUSTERS VECTOR*/
+    /*SUM ALL COORDINATES FOR EACH CLUSTERS VECTOR*/
     for (i = 0; i < pointsnumber; i++) {
         curr = clusters[i];
         CountCluster[curr]++;
@@ -656,7 +668,7 @@ double **kmeans(int k, int n, double **points, long *centroids_indices) {
 
     /* INIT CLUSTERS */
     clusters = calloc(pointsNumber, sizeof(int));
-    assert(clusters != NULL && ERR_MSG);
+    assert(clusters != NULL && "An Error Has Occured");
     for (i = 0; i < pointsNumber; i++) {
         clusters[i] = -1;
     }

@@ -5,3 +5,5 @@ python3 spkmeans.py 3 wam input12.csv
 
 valgrind --leak-check=full --show-leak-kinds=all ./spkmeans 0 wam input3.csv
 gdb --args python signal_test.py
+
+zip -r 314050683_208468538_final.zip 314050683_208468538_final

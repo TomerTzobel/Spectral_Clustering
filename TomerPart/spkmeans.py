@@ -4,6 +4,7 @@ import math
 import sys
 import spkmeansmodule as spkm
 
+# return list of k indices of initial centroids
 def get_init_centroids(points, k):
     np.random.seed(0)
     u1 = np.random.choice(len(points))
@@ -25,12 +26,12 @@ def get_init_centroids(points, k):
         z += 1
     return centroids
 
+# return distance between a and b
 def eval_distance(a, b):
     norm = np.linalg.norm(a-b)
     return norm**2
 
-ERR_MSG = "An Error Has Occured"
-#main
+# main
 args_arr = sys.argv[1:]
 k = int(args_arr[0])
 goal = args_arr[1]
