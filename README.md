@@ -1,6 +1,4 @@
 # Spectral_Clustering
-Spectral clustering 
-
 Spectral clustering techniques make use of the spectrum (eigenvalues) of the similarity matrix of the data to perform dimensionality reduction before clustering in fewer dimensions
 
 
